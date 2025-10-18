@@ -1,0 +1,45 @@
+{
+    // Use o IntelliSense para saber mais sobre os atributos possíveis.
+    // Focalizar para exibir as descrições dos atributos existentes.
+    // Para obter mais informações, acesse: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "xiaomi",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "192.168.0.104:55555",
+        },
+        {
+            "name": "pixel 9a",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "emulator-5554",
+        },
+        {
+            "name": "k41s",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "192.168.0.102:5555",
+        },
+        {
+            "name": "windows",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "windows",
+        },
+    ], 
+    "compounds": [
+        {
+            "name": "All Devices",
+            "configurations": [
+                "xiaomi",
+                "pixel 9a",
+                //"23021RAAEG-usb",
+                //"k41s", 
+                //"windows",
+            ]
+        }
+    ]
+}

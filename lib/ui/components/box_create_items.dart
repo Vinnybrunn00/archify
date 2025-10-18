@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:archify/constants/constants_color.dart';
 
-class BoxCreateItems extends StatelessWidget {
+class BoxCreateFolders extends StatelessWidget {
   final void Function(String)? onChanged;
   final void Function()? onCreateFolder;
   final Color? colorButtonCreateFolder;
   final TextEditingController? controller;
 
-  const BoxCreateItems({
+  const BoxCreateFolders({
     super.key,
     this.onChanged,
     this.onCreateFolder,
     this.colorButtonCreateFolder,
-    this.controller,
+    this.controller, 
   });
 
   @override
@@ -52,6 +52,7 @@ class BoxCreateItems extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: TextField(
+                    autofocus: false,
                     controller: controller,
                     onChanged: onChanged,
                     cursorHeight: 20,

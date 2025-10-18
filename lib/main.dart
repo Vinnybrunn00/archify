@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:archify/ui/home/home_page.dart';
+import 'package:archify/ui/page/main_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: HomePage(),
+      home: MainPage(),
     );
   }
 }

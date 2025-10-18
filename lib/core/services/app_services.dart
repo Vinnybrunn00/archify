@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
 class AppServices {
-  void createFolder(String newFolder, String? path) async {
+  Future<String?> createFolder(String newFolder, String? path) async {
     final Directory? directory = await getDownloadsDirectory();
 
     if (directory != null) {
@@ -10,10 +10,16 @@ class AppServices {
 
       String joinPath = path ?? files;
 
-      final Directory dicFiles = Directory('$joinPath/$newFolder');
+      Directory dicFiles = Directory('$joinPath/$newFolder');
+
+      if (await dicFiles.exists()) {
+        return 'Uma pasta com este nome ja existe, tente outro.';
+      }
 
       await dicFiles.create();
+      return null;
     }
+    return 'Diretório não existe!';
   }
 
   Future<void> delete(String path) async {
@@ -26,7 +32,7 @@ class AppServices {
     return dicFiles.listSync();
   }
 
-  void copyFiles({
+  Future<void> copyFiles({
     required String fromPath,
     required String toPath,
     required String name,
