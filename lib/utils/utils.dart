@@ -10,6 +10,47 @@ import 'package:archify/core/models/file_types.dart';
 import 'package:intl/intl.dart';
 
 class Utils {
+  String showFileSystemException(String message) {
+    switch (message) {
+      case 'Cannot open file':
+        return 'Arquivo não pode ser aberto.';
+      case 'Cannot create file':
+        return 'Arquivo não pode ser criado';
+      case 'Cannot delete file':
+        return 'Arquivo não pode ser deletado';
+      case 'Cannot copy file':
+        return 'Arquivo não pode ser copiado';
+      case 'Cannot rename file' || 'Rename failed':
+        return 'Arquivo não pode ser renomeado';
+      case 'Cannot open directory':
+        return 'Pasta não pode ser aberta';
+      case 'Cannot create directory':
+        return 'Pasta não pode ser criada';
+      case 'Cannot delete directory':
+        return 'Pasta não pode ser deletada';
+      case 'Cannot copy directory':
+        return 'Pasta não pode ser copiada';
+      case 'Operation failed':
+        return 'Operação falha';
+      case 'Not a directory':
+        return 'Isso não é um diretório';
+      case 'File exists':
+        return 'Arquivo existente.';
+      case 'No such file or directory':
+        return 'Não existe tal arquivo ou diretório';
+      case 'Permission denied':
+        return 'Você não tem permissão para executar esta ação';
+      case 'Device or resource busy':
+        return 'Dispositivo ou recurso ocupado';
+      case 'No space left on device':
+        return 'Não há espaço disponível no dispositivo';
+      case 'Text file busy':
+        return 'Arquivo de texto ocupado';
+      default:
+        return 'Invalid argument';
+    }
+  }
+
   void showScaffoldMessage(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

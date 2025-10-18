@@ -8,7 +8,6 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:archify/constants/constants_color.dart';
 import 'package:archify/constants/constants_regex.dart';
 import 'package:archify/core/models/file_types.dart';
-import 'package:archify/core/services/app_services.dart';
 import 'package:archify/ui/components/box_create_items.dart';
 import 'package:archify/ui/components/box_items.dart';
 import 'package:archify/ui/view/app_pdf_view.dart';
@@ -35,24 +34,21 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   final TextEditingController _controller = TextEditingController();
-  final AppServices _appServices = AppServices();
   final FilesServices _filesServices = FilesServices();
+  final Utils _utils = Utils();
 
   final ScrollController _scrollController = ScrollController();
 
-  final Utils _utils = Utils();
-
   bool _isValid = false;
-
-  List<FileSystemEntity> _list = [];
-
   bool _isDirectory = false;
-  String _nameFile = '';
-
   bool _isLoading = false;
 
-  int? _index;
   String _path = '';
+  String _nameFile = '';
+
+  List<FileSystemEntity> _listFolders = [];
+
+  int? _index;
 
   void _loadListFolders() async {
     final Directory? directory = await getDownloadsDirectory();
@@ -60,12 +56,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     if (directory != null) {
       final String path = directory.parent.path;
 
-      List<FileSystemEntity> list = _appServices.listFolders(
+      List<FileSystemEntity> listFolders = _filesServices.listFolders(
         widget.path ?? path,
       );
 
       setState(() {
-        _list = list;
+        _listFolders = listFolders;
 
         _controller.clear();
         _isValid = false;
@@ -75,7 +71,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   void _update() {
     setState(() {
-      _list = widget.listItems!;
+      _listFolders = widget.listItems!;
       _controller.clear();
       _isValid = false;
     });
@@ -247,7 +243,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     onCreateFolder: _isValid
                         ? () async {
                             FocusScope.of(context).unfocus();
-                            final exist = await _appServices.createFolder(
+                            final exist = await _filesServices.createFolder(
                               _controller.text,
                               widget.path,
                             );
@@ -264,15 +260,15 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         : null,
                   ),
                   Expanded(
-                    child: _list.isEmpty
+                    child: _listFolders.isEmpty
                         ? Text('Diretório vazio')
                         : ListView.builder(
-                            itemCount: _list.length,
+                            itemCount: _listFolders.length,
                             itemBuilder: (context, index) {
-                              String nameFile = _list[index].path
+                              String nameFile = _listFolders[index].path
                                   .split('/')
                                   .last;
-                              String path = _list[index].path;
+                              String path = _listFolders[index].path;
 
                               final Directory directory = Directory(path);
                               final File file = File(path);
@@ -293,7 +289,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                 isCode: codeExtRegex.hasMatch(path),
                               );
 
-                              final splitFiles = _list[index].path.split(
+                              final splitFiles = _listFolders[index].path.split(
                                 '/com.vindev.archify/files',
                               );
 
@@ -397,7 +393,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   context,
                   size: size,
                   onDelete: () async {
-                    await _appServices.delete(widget.path ?? _path);
+                    await _filesServices.delete(widget.path ?? _path);
                     _loadListFolders();
 
                     _selectDisable();
