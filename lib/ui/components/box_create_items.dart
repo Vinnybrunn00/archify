@@ -1,3 +1,4 @@
+import 'package:archify/ui/components/input_text.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:archify/constants/constants_color.dart';
@@ -13,7 +14,7 @@ class BoxCreateFolders extends StatelessWidget {
     this.onChanged,
     this.onCreateFolder,
     this.colorButtonCreateFolder,
-    this.controller, 
+    this.controller,
   });
 
   @override
@@ -49,31 +50,12 @@ class BoxCreateFolders extends StatelessWidget {
                   height: 45,
                   width: size.width,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(18),
                   ),
-                  child: TextField(
-                    autofocus: false,
+                  child: InputText(
+                    hintText: 'Ex: Primeira semana',
                     controller: controller,
                     onChanged: onChanged,
-                    cursorHeight: 20,
-                    cursorWidth: 1,
-                    decoration: InputDecoration(
-                      hintText: 'Ex: Primeira semana',
-                      hintStyle: TextStyle(
-                        color: AppColor.blackColorAlpha55,
-                        fontSize: 11,
-                      ),
-                      border: OutlineInputBorder(),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: AppColor.blackColorAlpha55,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: AppColor.pupleColor),
-                      ),
-                      contentPadding: EdgeInsets.all(10),
-                    ),
                   ),
                 ),
               ),

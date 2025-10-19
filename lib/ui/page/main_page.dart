@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:archify/core/services/files_services.dart';
 import 'package:archify/ui/components/box_options_archive.dart';
+
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:archify/constants/constants_color.dart';
@@ -36,6 +37,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   final TextEditingController _controller = TextEditingController();
   final FilesServices _filesServices = FilesServices();
   final Utils _utils = Utils();
+
+  final TextEditingController _newNameController = TextEditingController();
 
   final ScrollController _scrollController = ScrollController();
 
@@ -162,7 +165,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   _update();
                 }
               }
-              // send message error here.
+              // error messages
+              log(_filesServices.errorMessage.toString());
             },
             child: Icon(
               EvaIcons.cloud_upload_outline,
@@ -173,6 +177,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         ],
       ),
       backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SizedBox.expand(
           child: Stack(
@@ -250,6 +255,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
                             if (exist != null) {
                               // throw error here
+                              // error messages
+                              log(_filesServices.errorMessage.toString());
                             }
                             _loadListFolders();
 
@@ -411,15 +418,33 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     onRename: () async {
                       final String path = widget.path ?? _path;
 
-                      await _filesServices.renameFileOrFolder(
-                        isDirectory: _isDirectory,
-                        path: path,
-                        newName: _isDirectory ? 'nova pasta' : 'novo arquivo',
-                      );
-                      _loadListFolders();
                       _selectDisable();
 
-                      log(path);
+                      await _utils.showModalButtonSheetRename(
+                        context,
+                        size: size,
+                        newNameController: _newNameController,
+                        nameFile: _nameFile,
+                        onCancel: () {
+                          Navigator.of(context).pop();
+                        },
+                        onRename: () async {
+                          await _filesServices.renameFileOrFolder(
+                            isDirectory: _isDirectory,
+                            newName: _newNameController.text,
+                            path: path,
+                          );
+
+                          // error messages
+                          log(_filesServices.errorMessage.toString());
+
+                          _newNameController.clear();
+                          _loadListFolders();
+
+                          if (context.mounted) Navigator.of(context).pop();
+                        },
+                      );
+                      _loadListFolders();
                     },
                   );
                 },

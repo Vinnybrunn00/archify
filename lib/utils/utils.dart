@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:archify/ui/components/box_paths.dart';
 import 'package:archify/ui/components/bt_confirm_or_cancell.dart';
+import 'package:archify/ui/components/input_text.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:archify/constants/constants_color.dart';
@@ -10,47 +11,6 @@ import 'package:archify/core/models/file_types.dart';
 import 'package:intl/intl.dart';
 
 class Utils {
-  String showFileSystemException(String message) {
-    switch (message) {
-      case 'Cannot open file':
-        return 'Arquivo não pode ser aberto.';
-      case 'Cannot create file':
-        return 'Arquivo não pode ser criado';
-      case 'Cannot delete file':
-        return 'Arquivo não pode ser deletado';
-      case 'Cannot copy file':
-        return 'Arquivo não pode ser copiado';
-      case 'Cannot rename file' || 'Rename failed':
-        return 'Arquivo não pode ser renomeado';
-      case 'Cannot open directory':
-        return 'Pasta não pode ser aberta';
-      case 'Cannot create directory':
-        return 'Pasta não pode ser criada';
-      case 'Cannot delete directory':
-        return 'Pasta não pode ser deletada';
-      case 'Cannot copy directory':
-        return 'Pasta não pode ser copiada';
-      case 'Operation failed':
-        return 'Operação falha';
-      case 'Not a directory':
-        return 'Isso não é um diretório';
-      case 'File exists':
-        return 'Arquivo existente.';
-      case 'No such file or directory':
-        return 'Não existe tal arquivo ou diretório';
-      case 'Permission denied':
-        return 'Você não tem permissão para executar esta ação';
-      case 'Device or resource busy':
-        return 'Dispositivo ou recurso ocupado';
-      case 'No space left on device':
-        return 'Não há espaço disponível no dispositivo';
-      case 'Text file busy':
-        return 'Arquivo de texto ocupado';
-      default:
-        return 'Invalid argument';
-    }
-  }
-
   void showScaffoldMessage(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -94,6 +54,72 @@ class Utils {
           ),
         ),
       ],
+    );
+  }
+
+  Future<void> showModalButtonSheetRename(
+    BuildContext context, {
+    required String nameFile,
+    required Size size,
+    required TextEditingController? newNameController,
+    required void Function()? onRename,
+    required void Function()? onCancel,
+  }) async {
+    await showModalBottomSheet(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      context: context,
+      builder: (ctx) => Container(
+        padding: EdgeInsets.only(left: 12, right: 12, top: 12),
+        margin: EdgeInsets.only(
+          left: 8,
+          right: 8,
+          bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+        ),
+        height: size.height * .25,
+        width: size.width,
+        decoration: BoxDecoration(
+          color: Color(0xff232323),
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Column(
+          children: [
+            Text(
+              'Renomear',
+              style: TextStyle(color: AppColor.whiteColor, fontSize: 20),
+            ),
+            SizedBox(height: 5),
+            Text(
+              'Insira um novo nome',
+              style: TextStyle(color: AppColor.whiteColor, fontSize: 15),
+            ),
+            SizedBox(height: 15),
+            InputText(
+              color: Colors.white.withAlpha(90),
+              styleTextColor: AppColor.whiteColor,
+              controller: newNameController,
+              onChanged: (String? newName) {},
+              hintText: nameFile,
+            ),
+            SizedBox(height: 15),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                BtConfirmOrCancell(
+                  onTap: onCancel,
+                  text: 'Cancelar',
+                  color: AppColor.whiteColor,
+                ),
+                BtConfirmOrCancell(
+                  onTap: onRename,
+                  text: 'Renomear',
+                  color: AppColor.orangerColor,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -274,5 +300,46 @@ class Utils {
         ),
       ),
     );
+  }
+
+  String showFileSystemException(String message) {
+    switch (message) {
+      case 'Cannot open file':
+        return 'Arquivo não pode ser aberto.';
+      case 'Cannot create file':
+        return 'Arquivo não pode ser criado';
+      case 'Cannot delete file':
+        return 'Arquivo não pode ser deletado';
+      case 'Cannot copy file':
+        return 'Arquivo não pode ser copiado';
+      case 'Cannot rename file' || 'Rename failed':
+        return 'Arquivo não pode ser renomeado';
+      case 'Cannot open directory':
+        return 'Pasta não pode ser aberta';
+      case 'Cannot create directory':
+        return 'Pasta não pode ser criada';
+      case 'Cannot delete directory':
+        return 'Pasta não pode ser deletada';
+      case 'Cannot copy directory':
+        return 'Pasta não pode ser copiada';
+      case 'Operation failed':
+        return 'Operação falha';
+      case 'Not a directory':
+        return 'Isso não é um diretório';
+      case 'File exists':
+        return 'Arquivo existente.';
+      case 'No such file or directory':
+        return 'Não existe tal arquivo ou diretório';
+      case 'Permission denied':
+        return 'Você não tem permissão para executar esta ação';
+      case 'Device or resource busy':
+        return 'Dispositivo ou recurso ocupado';
+      case 'No space left on device':
+        return 'Não há espaço disponível no dispositivo';
+      case 'Text file busy':
+        return 'Arquivo de texto ocupado';
+      default:
+        return 'Invalid argument';
+    }
   }
 }

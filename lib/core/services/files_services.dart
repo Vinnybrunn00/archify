@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:archify/core/services/interfaces/interface_file_service.dart';
 import 'package:archify/utils/utils.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -109,10 +108,11 @@ class FilesServices implements InterfaceFileService {
 
         if (fileSingle.path != null) {
           final File file = File(fileSingle.path!);
-          await file.copy('$pathTo/$fileSingle.name');
+          await file.copy('$pathTo/${fileSingle.name}');
         }
       }
-    } catch (_) {
+    } catch (err) {
+      log(err.toString());
       _errorMessage = 'Erro ao selecionar ou mover arquivo';
     }
   }
