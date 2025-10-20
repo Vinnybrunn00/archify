@@ -99,19 +99,21 @@ class FilesServices implements FileServiceInterface {
     try {
       String pathTo = path ?? directory.parent.path;
 
-      final FilePickerResult? filePicker = await FilePicker.platform
-          .pickFiles();
+      final FilePickerResult? pickFiles = await FilePicker.platform.pickFiles(
+        allowMultiple: true,
+      );
 
-      if (filePicker != null) {
-        final PlatformFile fileSingle = filePicker.files.single;
+      if (pickFiles != null) {
+        final List<File> fileList = pickFiles.paths
+            .map((paths) => File(paths!))
+            .toList();
 
-        if (fileSingle.path != null) {
-          final File file = File(fileSingle.path!);
-          await file.copy('$pathTo/${fileSingle.name}');
+        for (final File item in fileList) {
+          String name = item.path.split('/').last;
+          await item.copy('$pathTo/$name');
         }
       }
     } catch (err) {
-      log(err.toString());
       _errorMessage = 'Erro ao selecionar ou mover arquivo';
     }
   }
