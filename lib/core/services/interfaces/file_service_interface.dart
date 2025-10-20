@@ -1,6 +1,6 @@
 import 'dart:io';
 
-abstract class InterfaceFileService {
+abstract class FileServiceInterface {
   String? get errorMessage;
 
   Future<void> renameFileOrFolder({

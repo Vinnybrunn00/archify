@@ -1,12 +1,12 @@
 import 'dart:developer';
 import 'dart:io';
-import 'package:archify/core/services/interfaces/interface_file_service.dart';
+import 'package:archify/core/services/interfaces/file_service_interface.dart';
 import 'package:archify/utils/utils.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-class FilesServices implements InterfaceFileService {
+class FilesServices implements FileServiceInterface {
   final Utils _utils = Utils();
 
   String? _errorMessage;
@@ -55,25 +55,24 @@ class FilesServices implements InterfaceFileService {
   Future<String?> createFolder(String newFolder, String? path) async {
     final Directory? directory = await getDownloadsDirectory();
 
-    if (directory != null) {
-      try {
-        final String files = directory.parent.path;
+    if (directory == null) return 'Diretório não existe!';
 
-        String joinPath = path ?? files;
+    try {
+      final String files = directory.parent.path;
 
-        Directory dicFiles = Directory('$joinPath/$newFolder');
+      String joinPath = path ?? files;
 
-        if (await dicFiles.exists()) {
-          return 'Uma pasta com este nome ja existe, tente outro.';
-        }
+      Directory dicFiles = Directory('$joinPath/$newFolder');
 
-        await dicFiles.create();
-        return null;
-      } on FileSystemException catch (err) {
-        return _utils.showFileSystemException(err.message);
+      if (await dicFiles.exists()) {
+        return 'Uma pasta com este nome ja existe, tente outro.';
       }
+
+      await dicFiles.create();
+      return null;
+    } on FileSystemException catch (err) {
+      return _utils.showFileSystemException(err.message);
     }
-    return 'Diretório não existe!';
   }
 
   @override
