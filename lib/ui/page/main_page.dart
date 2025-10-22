@@ -1,9 +1,8 @@
-import 'dart:developer';
 import 'dart:io';
-
 import 'package:archify/core/services/files_services.dart';
 import 'package:archify/ui/components/box_options_archive.dart';
-
+import 'package:archify/ui/components/mini_bt_icon.dart';
+import 'package:archify/ui/page/statistic_for_nerds.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:archify/constants/constants_color.dart';
@@ -152,9 +151,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           ),
           overflow: TextOverflow.ellipsis,
         ),
-        actionsPadding: EdgeInsets.only(right: 30),
+        actionsPadding: EdgeInsets.only(right: 20),
         actions: [
-          InkWell(
+          MiniBtIcon(
             onTap: () async {
               await _filesServices.onSelectAndCopyFile(widget.path);
 
@@ -164,15 +163,25 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 if (widget.listItems != null) {
                   _update();
                 }
+              } else {
+                if (!context.mounted) return;
+
+                _utils.showMessageError(
+                  context,
+                  message: _filesServices.errorMessage!,
+                );
               }
-              // error messages
-              log(_filesServices.errorMessage.toString());
             },
-            child: Icon(
-              EvaIcons.cloud_upload_outline,
-              size: 23,
-              color: AppColor.blackBlue,
-            ),
+            icon: EvaIcons.cloud_upload_outline,
+          ),
+          SizedBox(width: 15),
+          MiniBtIcon(
+            onTap: () {
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => StatisticForNerds()));
+            },
+            icon: MingCute.bug_line,
           ),
         ],
       ),
@@ -248,16 +257,19 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     onCreateFolder: _isValid
                         ? () async {
                             FocusScope.of(context).unfocus();
+
                             final exist = await _filesServices.createFolder(
                               _controller.text,
                               widget.path,
                             );
 
-                            if (exist != null) {
-                              // throw error here
-                              // error messages
-                              log(_filesServices.errorMessage.toString());
+                            if (exist != null && context.mounted) {
+                              _utils.showMessageError(
+                                context,
+                                message: _filesServices.errorMessage!,
+                              );
                             }
+
                             _loadListFolders();
 
                             if (widget.listItems != null) {
@@ -345,7 +357,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                     ? () {
                                         // open folder
                                         if (isDirectory) {
-                                          _utils.goToRoutePage(
+                                          _utils.goToRoutePageWithOutAnimation(
                                             context,
                                             route: MainPage(
                                               path: path,
@@ -358,7 +370,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
                                         // open pdf file (only android)
                                         if (fileTypes.isPdf) {
-                                          _utils.goToRoutePage(
+                                          _utils.goToRoutePageWithOutAnimation(
                                             context,
                                             route: PdfViewer(path: path),
                                           );
@@ -401,6 +413,15 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   size: size,
                   onDelete: () async {
                     await _filesServices.delete(widget.path ?? _path);
+
+                    if (_filesServices.errorMessage != null &&
+                        context.mounted) {
+                      _utils.showMessageError(
+                        context,
+                        message: _filesServices.errorMessage!,
+                      );
+                    }
+
                     _loadListFolders();
 
                     _selectDisable();
@@ -435,8 +456,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                             path: path,
                           );
 
-                          // error messages
-                          log(_filesServices.errorMessage.toString());
+                          if (_filesServices.errorMessage != null &&
+                              context.mounted) {
+                            _utils.showMessageError(
+                              context,
+                              message: _filesServices.errorMessage!,
+                            );
+                          }
 
                           _newNameController.clear();
                           _loadListFolders();

@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:math';
-
 import 'package:archify/ui/components/box_paths.dart';
 import 'package:archify/ui/components/bt_confirm_or_cancell.dart';
 import 'package:archify/ui/components/input_text.dart';
@@ -11,7 +10,7 @@ import 'package:archify/core/models/file_types.dart';
 import 'package:intl/intl.dart';
 
 class Utils {
-  void showScaffoldMessage(BuildContext context, String message) {
+  void showMessageError(BuildContext context, {required String message}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         width: 200,
@@ -200,7 +199,11 @@ class Utils {
     return '${value.toStringAsFixed(decimals)} ${suffixes[i]}';
   }
 
-  void goToRoutePage(BuildContext context, {required Widget route}) {
+
+  void goToRoutePageWithOutAnimation(
+    BuildContext context, {
+    required Widget route,
+  }) {
     Navigator.of(context).push(
       PageRouteBuilder(
         pageBuilder: (_, _, _) => route,
