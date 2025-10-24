@@ -1,10 +1,16 @@
 import 'package:archify/constants/constants_color.dart';
 import 'package:flutter/material.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class StackBattery extends StatelessWidget {
   final int percent;
+  final String charging;
 
-  const StackBattery({super.key, required this.percent});
+  const StackBattery({
+    super.key,
+    required this.percent,
+    required this.charging,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -14,23 +20,38 @@ class StackBattery extends StatelessWidget {
       children: [
         AnimatedContainer(
           duration: Duration(milliseconds: 550),
-          height: percent.toDouble() * .5,
-          width: size.width * .15,
+          height: percent.toDouble(),
+          width: size.width * .09,
           decoration: BoxDecoration(
-            color: Colors.green,
-            borderRadius: BorderRadius.circular(12),
+            color: charging == 'Carregando'
+                ? AppColor.greenColor.withAlpha(60)
+                : AppColor.blackBlue.withAlpha(120),
+            borderRadius: BorderRadius.circular(8),
           ),
-          child: Text(percent.toString()),
+        ),
+        Positioned(
+          top: 40,
+          left: percent == 100 ? 8 : 10,
+          child: Column(
+            children: [
+              Text(
+                percent.toString(),
+                style: TextStyle(color: Colors.white, fontSize: 12),
+              ),
+              charging == 'Carregando'
+                  ? Icon(EvaIcons.flash, color: AppColor.orangerColor, size: 13)
+                  : Container(),
+            ],
+          ),
         ),
         AnimatedContainer(
           duration: Duration(milliseconds: 550),
-          height: size.height * .25,
-          width: size.width * .15,
+          height: 100,
+          width: size.width * .09,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColor.greenColor),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: AppColor.greenColor.withAlpha(200)),
           ),
-          child: Text(percent.toString()),
         ),
       ],
     );

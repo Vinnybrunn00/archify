@@ -199,6 +199,14 @@ class Utils {
     return '${value.toStringAsFixed(decimals)} ${suffixes[i]}';
   }
 
+  String convertKBToGB(String kB) {
+    final double factor = 1024 * 1024;
+    String replace = kB.replaceAll('kB', '');
+
+    String gigabytes = (double.parse(replace) / factor).toStringAsFixed(2);
+
+    return gigabytes;
+  }
 
   void goToRoutePageWithOutAnimation(
     BuildContext context, {

@@ -8,10 +8,17 @@ import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.MethodChannel // Adicionado para a CPU
+import android.os.Build // Adicionado para informações de Build
+import java.io.File
+import java.io.RandomAccessFile
+import android.app.ActivityManager 
+import android.os.StatFs
 
 class MainActivity : FlutterActivity() {
     // Definimos o canal de eventos para o stream
     private val EVENT_CHANNEL = "archify/battery_info" 
+    private val METHOD_CHANNEL = "archify/device_info"
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -20,6 +27,135 @@ class MainActivity : FlutterActivity() {
         EventChannel(flutterEngine.dartExecutor.binaryMessenger, EVENT_CHANNEL).setStreamHandler(
             BatteryStreamHandler(applicationContext)
         )
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, METHOD_CHANNEL).setMethodCallHandler {
+            call, result ->
+            when (call.method) {
+                "getCpuInfo" -> {
+                    result.success(getCpuInfo())
+                }
+                "getDeviceInfo" -> { 
+                    result.success(getDeviceInfo())
+                }
+                "getStorageInfo" -> { // Novo método
+                    result.success(getStorageInfo())
+                }
+                else -> {
+                    result.notImplemented()
+                }
+            }
+        }
+    }
+    // =========================================================
+    // FUNÇÕES DE LEITURA ESTÁTICA - Adicionadas e Modificadas
+    // =========================================================
+
+    private fun getDeviceInfo(): Map<String, Any?> {
+        val infoMap = mutableMapOf<String, Any?>()
+        
+        // Informações Básicas
+        infoMap["manufacturer"] = Build.MANUFACTURER
+        infoMap["model"] = Build.MODEL
+        infoMap["device"] = Build.DEVICE
+        infoMap["android_version"] = Build.VERSION.RELEASE
+        infoMap["sdk_int"] = Build.VERSION.SDK_INT
+        
+        // Detalhes Estendidos
+        infoMap["product_name"] = Build.PRODUCT
+        infoMap["bootloader"] = Build.BOOTLOADER
+        infoMap["display_id"] = Build.DISPLAY
+        infoMap["hardware_name"] = Build.HARDWARE // Codinome do kernel/placa
+        infoMap["board_name"] = Build.BOARD
+        
+        return infoMap
+    }
+
+    // NOVA FUNÇÃO: INFORMAÇÕES DE ARMAZENAMENTO INTERNO
+    private fun getStorageInfo(): Map<String, Any?> {
+        val infoMap = mutableMapOf<String, Any?>()
+        
+        try {
+            // StatFs lê o sistema de arquivos raiz do armazenamento interno
+            val stat = StatFs(context.filesDir.path)
+
+            // Nota: Os valores são em bytes (B)
+            val blockSize = stat.blockSizeLong
+            val totalBlocks = stat.blockCountLong
+            val availableBlocks = stat.availableBlocksLong
+            
+            infoMap["total_internal_storage_bytes"] = totalBlocks * blockSize
+            infoMap["available_internal_storage_bytes"] = availableBlocks * blockSize
+            infoMap["root_path"] = context.filesDir.path
+
+        } catch (e: Exception) {
+            infoMap["error"] = "Falha ao ler armazenamento: ${e.message}"
+        }
+        
+        return infoMap
+    }
+    // =========================================================
+    // NOVA FUNÇÃO: OBTENÇÃO DE INFORMAÇÕES DA CPU
+    // =========================================================
+    private fun getCpuInfo(): Map<String, Any?> {
+        val infoMap = mutableMapOf<String, Any?>()
+
+        // 1. Número de Cores (Método Oficial)
+        infoMap["core_count"] = Runtime.getRuntime().availableProcessors()
+
+        // 2. Modelo do Processador (Lendo /proc/cpuinfo)
+        infoMap["cpu_model"] = getCpuModelFromProcFile()
+
+        // 3. Arquitetura da CPU
+        infoMap["cpu_architecture"] = Build.CPU_ABI
+
+        // 4. Fabricante do Hardware
+        infoMap["hardware_manufacturer"] = Build.HARDWARE
+        
+        // 5. Máxima Frequência de CPU (em kHz)
+        infoMap["max_cpu_freq_khz"] = getMaxCpuFreqKHz()
+
+        return infoMap
+    }
+
+    // Função auxiliar para ler o modelo do CPU do arquivo de sistema
+    private fun getCpuModelFromProcFile(): String {
+        return try {
+            val reader = RandomAccessFile("/proc/cpuinfo", "r")
+            var line: String?
+            var model = "Desconhecido"
+            while (reader.readLine().also { line = it } != null) {
+                if (line!!.startsWith("Processor") || line!!.startsWith("model name")) {
+                    model = line!!.split(":").last().trim()
+                    break
+                }
+            }
+            reader.close()
+            model
+        } catch (e: Exception) {
+            e.printStackTrace()
+            "Erro ao ler /proc/cpuinfo"
+        }
+    }
+
+    // Função auxiliar para obter a frequência máxima (pode não funcionar em todos os dispositivos)
+    private fun getMaxCpuFreqKHz(): String {
+        return try {
+            var maxFreq = 0
+            val numCores = Runtime.getRuntime().availableProcessors()
+            for (i in 0 until numCores) {
+                // Tenta ler a frequência máxima para cada core
+                val file = File("/sys/devices/system/cpu/cpu$i/cpufreq/cpuinfo_max_freq")
+                if (file.exists()) {
+                    val freq = file.readText().trim().toInt()
+                    if (freq > maxFreq) {
+                        maxFreq = freq
+                    }
+                }
+            }
+            if (maxFreq > 0) "$maxFreq" else "N/A"
+        } catch (e: Exception) {
+            "N/A"
+        }
     }
 }
 
@@ -89,7 +225,7 @@ class BatteryStreamHandler(private val context: Context) : EventChannel.StreamHa
         // 3. Fonte de Energia
         val plugType = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1)
         val plugTypeString = when (plugType) {
-            BatteryManager.BATTERY_PLUGGED_AC -> "Cabo AC"
+            BatteryManager.BATTERY_PLUGGED_AC -> "Cabo: AC"
             BatteryManager.BATTERY_PLUGGED_USB -> "USB"
             BatteryManager.BATTERY_PLUGGED_WIRELESS -> "Sem Fio"
             0 -> "Desconectado"

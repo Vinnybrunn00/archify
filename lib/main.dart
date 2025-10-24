@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'Archify',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-       // textTheme: GoogleFonts.interTextTheme(),
+        // textTheme: GoogleFonts.interTextTheme(),
       ),
       home: MainPage(),
     );

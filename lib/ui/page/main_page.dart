@@ -1,5 +1,7 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:archify/core/services/files_services.dart';
+import 'package:archify/core/services/info_device.dart';
 import 'package:archify/ui/components/box_options_archive.dart';
 import 'package:archify/ui/components/mini_bt_icon.dart';
 import 'package:archify/ui/page/statistic_for_nerds.dart';
@@ -35,6 +37,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   final TextEditingController _controller = TextEditingController();
   final FilesServices _filesServices = FilesServices();
+  final InfoDevice _infoDevice = InfoDevice();
   final Utils _utils = Utils();
 
   final TextEditingController _newNameController = TextEditingController();

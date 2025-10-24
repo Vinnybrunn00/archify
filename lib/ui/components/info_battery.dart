@@ -3,22 +3,22 @@ import 'package:flutter/material.dart';
 
 class InfoBattery extends StatelessWidget {
   final String info;
+  final IconData? iconData;
+  final Color color;
 
-  const InfoBattery({super.key, required this.info});
+  const InfoBattery({
+    super.key,
+    required this.info,
+    this.iconData,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(
-          height: 10,
-          width: 10,
-          decoration: BoxDecoration(
-            color: AppColor.greenColor,
-            borderRadius: BorderRadius.circular(5),
-          ),
-        ),
-        SizedBox(width: 8),
+        Icon(iconData, color: color, size: 14),
+        SizedBox(width: 5),
         Text(info, style: TextStyle(color: AppColor.whiteColor)),
       ],
     );
