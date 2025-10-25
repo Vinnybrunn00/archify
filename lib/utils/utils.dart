@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:archify/core/models/hardware.dart';
 import 'package:archify/ui/components/box_paths.dart';
 import 'package:archify/ui/components/bt_confirm_or_cancell.dart';
 import 'package:archify/ui/components/input_text.dart';
@@ -208,6 +209,13 @@ class Utils {
     return gigabytes;
   }
 
+  double convertBatteryPercent({
+    required String memTotal,
+    required String memAvailable,
+  }) {
+    return (1 - double.parse(memAvailable) / double.parse(memTotal)) * 100;
+  }
+
   void goToRoutePageWithOutAnimation(
     BuildContext context, {
     required Widget route,
@@ -311,6 +319,11 @@ class Utils {
         ),
       ),
     );
+  }
+
+  String getSocReadableName(String? socModel) {
+    if (socModel == null || socModel.isEmpty) return "Desconhecido";
+    return socModels[socModel] ?? socModel;
   }
 
   String showFileSystemException(String message) {

@@ -1,6 +1,4 @@
-import 'dart:developer';
 import 'dart:io';
-
 import 'package:archify/core/models/hardware.dart';
 import 'package:archify/utils/utils.dart';
 import 'package:flutter/services.dart';
@@ -8,9 +6,9 @@ import 'package:flutter/services.dart';
 class InfoDevice {
   final EventChannel _battery = EventChannel('archify/battery_info');
   final MethodChannel _device = const MethodChannel('archify/device_info');
+  final MethodChannel _wifi = MethodChannel('archify/wifi_info');
 
   final Utils _utils = Utils();
-
   final Hardware _hardware = Hardware();
 
   Stream<Map<String, dynamic>> get getStreamMemory {
@@ -31,22 +29,29 @@ class InfoDevice {
     });
   }
 
-  Future<Map<String, dynamic>> getCpuInfo() async {
-    try {
-      final Map<dynamic, dynamic>? result = await _device.invokeMethod(
-        'getCpuInfo',
-      );
+  Stream<List<double>> get frequenceCpuStream {
+    return Stream.periodic(Duration(seconds: 1), (_) async {
+      return await _getFrequenceCpuInfo();
+    }).asyncMap((future) => future);
+  }
 
-      if (result != null) {
-        return result.cast<String, dynamic>();
-      }
-      return {'error': 'Nenhum dado retornado do nativo.'};
-    } on PlatformException catch (e) {
-      print("Falha ao obter informações da CPU: '${e.message}'.");
-      return {'error': 'Falha na chamada nativa: ${e.message}'};
-    } catch (e) {
-      return {'error': 'Erro desconhecido: $e'};
+  Stream<Map<String, dynamic>> get widfiInfoStream {
+    return Stream.periodic(Duration(seconds: 1), (_) async {
+      return await _getWifiInfo();
+    }).asyncMap((future) => future);
+  }
+
+  // ------------------------------------------------------------------//
+
+  Future<Map<String, dynamic>> _getCpuInfo() async {
+    final Map<dynamic, dynamic>? result = await _device.invokeMethod(
+      'getCpuInfo',
+    );
+
+    if (result != null) {
+      return result.cast<String, dynamic>();
     }
+    return {'error': 'Nenhum dado retornado do nativo.'};
   }
 
   // Método já existente (Expandido no Kotlin)
@@ -55,7 +60,14 @@ class InfoDevice {
       final Map<dynamic, dynamic>? result = await _device.invokeMethod(
         'getDeviceInfo',
       );
-      return (result ?? {}).cast<String, dynamic>();
+      Map<String, dynamic> getInfo = await _getCpuInfo();
+
+      if (result != null) {
+        result.addAll(getInfo);
+
+        return (result).cast<String, dynamic>();
+      }
+      return {};
     } on PlatformException catch (e) {
       return {'error': 'Falha na chamada de Info: ${e.message}'};
     }
@@ -86,4 +98,35 @@ class InfoDevice {
     }
     return map;
   }
+
+  Future<List<double>> _getFrequenceCpuInfo() async {
+    List<double> listFrequence = [];
+
+    Map<String, dynamic> getInfo = await _getCpuInfo();
+
+    for (int i = 0; i < getInfo['core_count']; i++) {
+      final File file = File(
+        '${_hardware.cpuinfoMaxFreq}/cpu$i/cpufreq/scaling_cur_freq',
+      );
+
+      if (await file.exists()) {
+        String frequence = await file.readAsString();
+
+        final int? frequenceInKzh = int.tryParse(frequence.trim());
+
+        if (frequenceInKzh != null) {
+          double frequenceMHz = (frequenceInKzh / 1000);
+          listFrequence.add(frequenceMHz);
+        }
+      }
+    }
+    return listFrequence;
+  }
+
+  Future<Map<String, dynamic>> _getWifiInfo() async {
+    final result = await _wifi.invokeMethod('getWifiInfo');
+    return Map<String, dynamic>.from(result ?? {});
+  }
+
+  void test() async {}
 }

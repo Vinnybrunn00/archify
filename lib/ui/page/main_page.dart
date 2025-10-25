@@ -1,10 +1,10 @@
-import 'dart:developer';
+
 import 'dart:io';
 import 'package:archify/core/services/files_services.dart';
 import 'package:archify/core/services/info_device.dart';
 import 'package:archify/ui/components/box_options_archive.dart';
 import 'package:archify/ui/components/mini_bt_icon.dart';
-import 'package:archify/ui/page/statistic_for_nerds.dart';
+import 'package:archify/ui/page/statistic.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:archify/constants/constants_color.dart';
@@ -93,6 +93,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
+    _infoDevice.test();
 
     if (widget.listItems != null) {
       _update();

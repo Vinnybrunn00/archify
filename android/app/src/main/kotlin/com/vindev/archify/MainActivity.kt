@@ -14,11 +14,16 @@ import java.io.File
 import java.io.RandomAccessFile
 import android.app.ActivityManager 
 import android.os.StatFs
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.net.wifi.WifiManager
+import java.net.InetAddress
 
 class MainActivity : FlutterActivity() {
     // Definimos o canal de eventos para o stream
     private val EVENT_CHANNEL = "archify/battery_info" 
     private val METHOD_CHANNEL = "archify/device_info"
+    private val METHOD_CHANNEL_WIFI = "archify/wifi_info"
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -27,6 +32,17 @@ class MainActivity : FlutterActivity() {
         EventChannel(flutterEngine.dartExecutor.binaryMessenger, EVENT_CHANNEL).setStreamHandler(
             BatteryStreamHandler(applicationContext)
         )
+
+         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, METHOD_CHANNEL_WIFI)
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "getWifiInfo" -> {
+                        val info = getWifiInfo(applicationContext)
+                        result.success(info)
+                    }
+                    else -> result.notImplemented()
+                }
+            }
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, METHOD_CHANNEL).setMethodCallHandler {
             call, result ->
@@ -46,6 +62,45 @@ class MainActivity : FlutterActivity() {
             }
         }
     }
+
+    @Suppress("MissingPermission")
+    private fun getWifiInfo(context: Context): Map<String, Any?> {
+        val map = mutableMapOf<String, Any?>()
+
+        val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        val wifiInfo = wifiManager.connectionInfo
+        map["ssid"] = wifiInfo.ssid?.replace("\"", "")
+        map["bssid"] = wifiInfo.bssid
+        map["rssi"] = wifiInfo.rssi
+        map["linkSpeedMbps"] = wifiInfo.linkSpeed
+        map["frequencyMHz"] = wifiInfo.frequency
+
+        // Converte o IP (int) para string
+        val ipInt = wifiInfo.ipAddress
+        val ip = if (ipInt != 0) {
+            InetAddress.getByAddress(
+                byteArrayOf(
+                    (ipInt and 0xff).toByte(),
+                    ((ipInt shr 8) and 0xff).toByte(),
+                    ((ipInt shr 16) and 0xff).toByte(),
+                    ((ipInt shr 24) and 0xff).toByte()
+                )
+            ).hostAddress
+        } else null
+        map["ipAddress"] = ip
+
+        val network = connectivityManager.activeNetwork
+        val caps = connectivityManager.getNetworkCapabilities(network)
+        val isWifi = caps?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ?: false
+        map["isWifiActive"] = isWifi
+
+        map["sdkInt"] = Build.VERSION.SDK_INT
+
+        return map
+    }
+
     // =========================================================
     // FUNÇÕES DE LEITURA ESTÁTICA - Adicionadas e Modificadas
     // =========================================================
@@ -56,16 +111,18 @@ class MainActivity : FlutterActivity() {
         // Informações Básicas
         infoMap["manufacturer"] = Build.MANUFACTURER
         infoMap["model"] = Build.MODEL
-        infoMap["device"] = Build.DEVICE
         infoMap["android_version"] = Build.VERSION.RELEASE
         infoMap["sdk_int"] = Build.VERSION.SDK_INT
+        infoMap["soc_manufacturer"] = Build.SOC_MANUFACTURER
+        infoMap["soc_model"] = Build.SOC_MODEL
         
         // Detalhes Estendidos
-        infoMap["product_name"] = Build.PRODUCT
-        infoMap["bootloader"] = Build.BOOTLOADER
         infoMap["display_id"] = Build.DISPLAY
-        infoMap["hardware_name"] = Build.HARDWARE // Codinome do kernel/placa
+        infoMap["hardware_name"] = Build.HARDWARE
         infoMap["board_name"] = Build.BOARD
+
+        // add novos
+        infoMap["brand"] = Build.BRAND
         
         return infoMap
     }
@@ -102,60 +159,14 @@ class MainActivity : FlutterActivity() {
         // 1. Número de Cores (Método Oficial)
         infoMap["core_count"] = Runtime.getRuntime().availableProcessors()
 
-        // 2. Modelo do Processador (Lendo /proc/cpuinfo)
-        infoMap["cpu_model"] = getCpuModelFromProcFile()
-
         // 3. Arquitetura da CPU
         infoMap["cpu_architecture"] = Build.CPU_ABI
 
         // 4. Fabricante do Hardware
         infoMap["hardware_manufacturer"] = Build.HARDWARE
         
-        // 5. Máxima Frequência de CPU (em kHz)
-        infoMap["max_cpu_freq_khz"] = getMaxCpuFreqKHz()
 
         return infoMap
-    }
-
-    // Função auxiliar para ler o modelo do CPU do arquivo de sistema
-    private fun getCpuModelFromProcFile(): String {
-        return try {
-            val reader = RandomAccessFile("/proc/cpuinfo", "r")
-            var line: String?
-            var model = "Desconhecido"
-            while (reader.readLine().also { line = it } != null) {
-                if (line!!.startsWith("Processor") || line!!.startsWith("model name")) {
-                    model = line!!.split(":").last().trim()
-                    break
-                }
-            }
-            reader.close()
-            model
-        } catch (e: Exception) {
-            e.printStackTrace()
-            "Erro ao ler /proc/cpuinfo"
-        }
-    }
-
-    // Função auxiliar para obter a frequência máxima (pode não funcionar em todos os dispositivos)
-    private fun getMaxCpuFreqKHz(): String {
-        return try {
-            var maxFreq = 0
-            val numCores = Runtime.getRuntime().availableProcessors()
-            for (i in 0 until numCores) {
-                // Tenta ler a frequência máxima para cada core
-                val file = File("/sys/devices/system/cpu/cpu$i/cpufreq/cpuinfo_max_freq")
-                if (file.exists()) {
-                    val freq = file.readText().trim().toInt()
-                    if (freq > maxFreq) {
-                        maxFreq = freq
-                    }
-                }
-            }
-            if (maxFreq > 0) "$maxFreq" else "N/A"
-        } catch (e: Exception) {
-            "N/A"
-        }
     }
 }
 

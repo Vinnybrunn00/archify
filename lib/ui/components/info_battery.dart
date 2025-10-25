@@ -19,7 +19,7 @@ class InfoBattery extends StatelessWidget {
       children: [
         Icon(iconData, color: color, size: 14),
         SizedBox(width: 5),
-        Text(info, style: TextStyle(color: AppColor.whiteColor)),
+        Text(info, style: TextStyle(color: AppColor.whiteColor, fontSize: 13)),
       ],
     );
   }

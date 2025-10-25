@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 
 import 'package:archify/constants/constants_color.dart';
 import 'package:archify/ui/components/info_battery.dart';
@@ -43,7 +43,7 @@ class BoxBattery extends StatelessWidget {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     return AnimatedContainer(
-      width: size.width * .6,
+      width: size.width * .55,
       margin: EdgeInsets.only(left: 8, right: 8),
       padding: EdgeInsets.only(left: 12, right: 12, bottom: 12, top: 8),
       duration: Duration(microseconds: 550),
