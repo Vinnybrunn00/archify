@@ -71,12 +71,17 @@ class MainActivity : FlutterActivity() {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         val wifiInfo = wifiManager.connectionInfo
+
         map["ssid"] = wifiInfo.ssid?.replace("\"", "")
         map["bssid"] = wifiInfo.bssid
-        map["rssi"] = wifiInfo.rssi
-        map["linkSpeedMbps"] = wifiInfo.linkSpeed
-        map["frequencyMHz"] = wifiInfo.frequency
-
+        map["rssi"] = "${wifiInfo.rssi} dBm"
+        map["linkSpeed"] = "${wifiInfo.linkSpeed} Mbps"
+        map["macAddress"] = wifiInfo.macAddress
+        map["frequencyMHz"] = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) "${wifiInfo.frequency} MHz" else null
+        
+        map["is5GHz"] = wifiInfo.frequency in 4900..5900
+        map["is24GHz"] = wifiInfo.frequency in 2400..2500
+        
         // Converte o IP (int) para string
         val ipInt = wifiInfo.ipAddress
         val ip = if (ipInt != 0) {
@@ -95,8 +100,6 @@ class MainActivity : FlutterActivity() {
         val caps = connectivityManager.getNetworkCapabilities(network)
         val isWifi = caps?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ?: false
         map["isWifiActive"] = isWifi
-
-        map["sdkInt"] = Build.VERSION.SDK_INT
 
         return map
     }
