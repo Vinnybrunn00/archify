@@ -20,7 +20,6 @@ import android.net.wifi.WifiManager
 import java.net.InetAddress
 
 class MainActivity : FlutterActivity() {
-    // Definimos o canal de eventos para o stream
     private val EVENT_CHANNEL = "archify/battery_info" 
     private val METHOD_CHANNEL = "archify/device_info"
     private val METHOD_CHANNEL_WIFI = "archify/wifi_info"

@@ -321,6 +321,34 @@ class Utils {
     );
   }
 
+  void setdBm() {
+    final String dbm = '-45 dBm';
+
+    final newValue = int.tryParse(
+      dbm.trim().replaceAll('dBm', '').replaceAll('-', ''),
+    );
+
+    if (newValue == null) return;
+
+    if (newValue >= 30 && newValue <= 41) {
+      print('Excelente');
+    } else if (newValue >= 40 && newValue <= 50) {
+      print('Muito bom');
+    } else if (newValue >= 51 && newValue <= 60) {
+      print('Bom');
+    } else if (newValue >= 61 && newValue <= 67) {
+      print('Razoável');
+    } else if (newValue >= 68 && newValue <= 70) {
+      print('Fraco');
+    } else if (newValue >= 71 && newValue <= 80) {
+      print('Muito fraco');
+    } else if (newValue >= 80) {
+      print('Inutilizável');
+    }
+
+    print(newValue);
+  }
+
   String getSocReadableName(String? socModel) {
     if (socModel == null || socModel.isEmpty) return "Desconhecido";
     return socModels[socModel] ?? socModel;
