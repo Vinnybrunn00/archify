@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:archify/core/models/hardware.dart';
 import 'package:archify/utils/utils.dart';
@@ -11,7 +12,7 @@ class InfoDevice {
   final Utils _utils = Utils();
   final Hardware _hardware = Hardware();
 
-  Stream<Map<String, dynamic>> get getStreamMemory {
+  Stream<Map<String, dynamic>>? get getStreamMemory {
     return Stream.periodic(Duration(seconds: 1), (_) async {
       return await getInforMemory();
     }).asyncMap((future) => future);
@@ -23,10 +24,11 @@ class InfoDevice {
     }).asyncMap((future) => future);
   }
 
-  Stream<Map<String, dynamic>> get batteryInfoStream {
-    return _battery.receiveBroadcastStream().map((dynamic event) {
-      return (event as Map).cast<String, dynamic>();
-    });
+  Stream<Map<String, dynamic>> get batteryInfoStream async* {
+    await for (final event in _battery.receiveBroadcastStream()) {
+      await Future.delayed(Duration(seconds: 1));
+      yield (event as Map).cast<String, dynamic>();
+    }
   }
 
   Stream<List<double>> get frequenceCpuStream {
@@ -54,8 +56,8 @@ class InfoDevice {
     return {'error': 'Nenhum dado retornado do nativo.'};
   }
 
-  // Método já existente (Expandido no Kotlin)
   Future<Map<String, dynamic>> getDeviceInfo() async {
+    await Future.delayed(Duration(seconds: 1));
     try {
       final Map<dynamic, dynamic>? result = await _device.invokeMethod(
         'getDeviceInfo',
@@ -73,7 +75,7 @@ class InfoDevice {
     }
   }
 
-  // NOVO MÉTODO: Obter informações de armazenamento
+  // Obter informações de armazenamento
   Future<Map<String, dynamic>> _getStorageInfo() async {
     try {
       final Map<dynamic, dynamic>? result = await _device.invokeMethod(

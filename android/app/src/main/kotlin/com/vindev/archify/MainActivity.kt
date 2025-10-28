@@ -8,8 +8,8 @@ import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
-import io.flutter.plugin.common.MethodChannel // Adicionado para a CPU
-import android.os.Build // Adicionado para informações de Build
+import io.flutter.plugin.common.MethodChannel
+import android.os.Build
 import java.io.File
 import java.io.RandomAccessFile
 import android.app.ActivityManager 
@@ -52,7 +52,7 @@ class MainActivity : FlutterActivity() {
                 "getDeviceInfo" -> { 
                     result.success(getDeviceInfo())
                 }
-                "getStorageInfo" -> { // Novo método
+                "getStorageInfo" -> {
                     result.success(getStorageInfo())
                 }
                 else -> {
@@ -110,26 +110,23 @@ class MainActivity : FlutterActivity() {
     private fun getDeviceInfo(): Map<String, Any?> {
         val infoMap = mutableMapOf<String, Any?>()
         
-        // Informações Básicas
         infoMap["manufacturer"] = Build.MANUFACTURER
         infoMap["model"] = Build.MODEL
         infoMap["android_version"] = Build.VERSION.RELEASE
         infoMap["sdk_int"] = Build.VERSION.SDK_INT
         infoMap["soc_manufacturer"] = Build.SOC_MANUFACTURER
         infoMap["soc_model"] = Build.SOC_MODEL
-        
-        // Detalhes Estendidos
+    
         infoMap["display_id"] = Build.DISPLAY
         infoMap["hardware_name"] = Build.HARDWARE
         infoMap["board_name"] = Build.BOARD
 
-        // add novos
         infoMap["brand"] = Build.BRAND
         
         return infoMap
     }
 
-    // NOVA FUNÇÃO: INFORMAÇÕES DE ARMAZENAMENTO INTERNO
+    // INFORMAÇÕES DE ARMAZENAMENTO INTERNO
     private fun getStorageInfo(): Map<String, Any?> {
         val infoMap = mutableMapOf<String, Any?>()
         
@@ -142,9 +139,8 @@ class MainActivity : FlutterActivity() {
             val totalBlocks = stat.blockCountLong
             val availableBlocks = stat.availableBlocksLong
             
-            infoMap["total_internal_storage_bytes"] = totalBlocks * blockSize
-            infoMap["available_internal_storage_bytes"] = availableBlocks * blockSize
-            infoMap["root_path"] = context.filesDir.path
+            infoMap["total_storage_bytes"] = totalBlocks * blockSize
+            infoMap["available_storage_bytes"] = availableBlocks * blockSize
 
         } catch (e: Exception) {
             infoMap["error"] = "Falha ao ler armazenamento: ${e.message}"
@@ -152,6 +148,7 @@ class MainActivity : FlutterActivity() {
         
         return infoMap
     }
+
     // =========================================================
     // NOVA FUNÇÃO: OBTENÇÃO DE INFORMAÇÕES DA CPU
     // =========================================================
@@ -167,7 +164,6 @@ class MainActivity : FlutterActivity() {
         // 4. Fabricante do Hardware
         infoMap["hardware_manufacturer"] = Build.HARDWARE
         
-
         return infoMap
     }
 }

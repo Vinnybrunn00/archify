@@ -55,6 +55,18 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   int? _index;
 
+  void _addPostFrameCallback() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 250),
+          curve: Curves.linear,
+        );
+      }
+    });
+  }
+
   void _loadListFolders() async {
     final Directory? directory = await getDownloadsDirectory();
 
@@ -102,13 +114,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       _loadListFolders();
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 250),
-        curve: Curves.linear,
-      );
-    });
+    _addPostFrameCallback();
 
     _controllerAnimation = AnimationController(
       duration: const Duration(milliseconds: 250),

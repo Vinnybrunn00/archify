@@ -1,4 +1,3 @@
-
 import 'package:archify/constants/constants_color.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -7,24 +6,24 @@ import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 class BoxMemory extends StatelessWidget {
   final int percentValue;
   final double percent;
-  final String memTotal;
-  final String memAvailable;
-  final String memUsed;
-  final List<double> mem;
-  final String cached;
-  final String swapTotal;
-  final String swapFree;
+  final String memoryTotal;
+  final String memoryAvailable;
+  final String memoryUsed;
+  final List<double> memoryPlotList;
+  final String memoryCached;
+  final String memorySwapTotal;
+  final String memorySwapFree;
 
   const BoxMemory({
     super.key,
     required this.percent,
-    required this.memTotal,
-    required this.memAvailable,
-    required this.memUsed,
-    required this.mem,
-    required this.cached,
-    required this.swapTotal,
-    required this.swapFree,
+    required this.memoryTotal,
+    required this.memoryAvailable,
+    required this.memoryUsed,
+    required this.memoryPlotList,
+    required this.memoryCached,
+    required this.memorySwapTotal,
+    required this.memorySwapFree,
     required this.percentValue,
   });
 
@@ -64,7 +63,7 @@ class BoxMemory extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '$memTotal GB Total',
+                      '$memoryTotal GB Total',
                       style: TextStyle(
                         color: AppColor.whiteColor,
                         fontSize: 12,
@@ -82,8 +81,8 @@ class BoxMemory extends StatelessWidget {
               SizedBox(
                 width: size.width * .43,
                 child: SfSparkLineChart.custom(
-                  dataCount: mem.length,
-                  yValueMapper: (index) => mem[index],
+                  dataCount: memoryPlotList.length,
+                  yValueMapper: (index) => memoryPlotList[index],
                   xValueMapper: (index) => index,
                   axisLineWidth: 2,
                   firstPointColor: Colors.blue,
@@ -102,35 +101,35 @@ class BoxMemory extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '$memUsed GB Usado',
+                      '$memoryUsed GB Usado',
                       style: TextStyle(
                         color: AppColor.whiteColor,
                         fontSize: 12,
                       ),
                     ),
                     Text(
-                      '^$swapTotal Swap',
+                      '^$memorySwapTotal Swap',
                       style: TextStyle(
                         color: AppColor.orangerColor,
                         fontSize: 10,
                       ),
                     ),
                     Text(
-                      '~$swapFree Swap',
+                      '~$memorySwapFree Swap',
                       style: TextStyle(
                         color: AppColor.greenColor,
                         fontSize: 10,
                       ),
                     ),
                     Text(
-                      '$cached Cache',
+                      '$memoryCached Cache',
                       style: TextStyle(
                         color: AppColor.pupleColor,
                         fontSize: 10,
                       ),
                     ),
                     Text(
-                      '$memAvailable GB Livre',
+                      '$memoryAvailable GB Livre',
                       style: TextStyle(
                         color: AppColor.whiteColor,
                         fontSize: 12,

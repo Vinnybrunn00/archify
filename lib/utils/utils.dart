@@ -1,6 +1,5 @@
 import 'dart:io';
-import 'dart:math';
-import 'package:archify/core/models/hardware.dart';
+import 'dart:math' as math;
 import 'package:archify/ui/components/box_paths.dart';
 import 'package:archify/ui/components/bt_confirm_or_cancell.dart';
 import 'package:archify/ui/components/input_text.dart';
@@ -9,6 +8,8 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:archify/constants/constants_color.dart';
 import 'package:archify/core/models/file_types.dart';
 import 'package:intl/intl.dart';
+
+import 'dart:developer' as dev;
 
 class Utils {
   void showMessageError(BuildContext context, {required String message}) {
@@ -194,9 +195,12 @@ class Utils {
         ? ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
         : ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
-    final i = min((log(bytes) / log(base)).floor(), suffixes.length - 1);
+    final i = math.min(
+      (math.log(bytes) / math.log(base)).floor(),
+      suffixes.length - 1,
+    );
 
-    final value = bytes / pow(base, i);
+    final value = bytes / math.pow(base, i);
     return '${value.toStringAsFixed(decimals)} ${suffixes[i]}';
   }
 
@@ -207,13 +211,6 @@ class Utils {
     String gigabytes = (double.parse(replace) / factor).toStringAsFixed(2);
 
     return gigabytes;
-  }
-
-  double convertBatteryPercent({
-    required String memTotal,
-    required String memAvailable,
-  }) {
-    return (1 - double.parse(memAvailable) / double.parse(memTotal)) * 100;
   }
 
   void goToRoutePageWithOutAnimation(
@@ -321,37 +318,35 @@ class Utils {
     );
   }
 
-  void setdBm() {
-    final String dbm = '-45 dBm';
-
+  Widget setPotencialdBm(String dbm) {
     final newValue = int.tryParse(
       dbm.trim().replaceAll('dBm', '').replaceAll('-', ''),
     );
 
-    if (newValue == null) return;
-
-    if (newValue >= 30 && newValue <= 41) {
-      print('Excelente');
-    } else if (newValue >= 40 && newValue <= 50) {
-      print('Muito bom');
-    } else if (newValue >= 51 && newValue <= 60) {
-      print('Bom');
-    } else if (newValue >= 61 && newValue <= 67) {
-      print('Razoável');
-    } else if (newValue >= 68 && newValue <= 70) {
-      print('Fraco');
-    } else if (newValue >= 71 && newValue <= 80) {
-      print('Muito fraco');
-    } else if (newValue >= 80) {
-      print('Inutilizável');
+    if (newValue == null) {
+      dev.log('nulo');
+      return Icon(BoxIcons.bx_wifi_off, color: Colors.white, size: 35);
     }
 
-    print(newValue);
-  }
-
-  String getSocReadableName(String? socModel) {
-    if (socModel == null || socModel.isEmpty) return "Desconhecido";
-    return socModels[socModel] ?? socModel;
+    if (newValue <= 30 || newValue <= 41) {
+      return Icon(BoxIcons.bx_wifi, color: Colors.white, size: 35);
+    } else if (newValue >= 40 || newValue <= 50) {
+      return Icon(BoxIcons.bx_wifi, color: Colors.white, size: 35);
+    } else if (newValue >= 51 || newValue <= 60) {
+      return Icon(BoxIcons.bx_wifi_2, color: Colors.white, size: 35);
+    } else if (newValue >= 61 || newValue <= 67) {
+      return Icon(BoxIcons.bx_wifi_2, color: Colors.white, size: 35);
+    } else if (newValue >= 68 || newValue <= 70) {
+      return Icon(BoxIcons.bx_wifi_1, color: Colors.white, size: 35);
+    } else if (newValue >= 71 || newValue <= 80) {
+      return Icon(BoxIcons.bx_wifi_1, color: Colors.white, size: 35);
+    } else if (newValue >= 80) {
+      dev.log('fraco?');
+      return Icon(BoxIcons.bx_wifi_off, color: Colors.white, size: 35);
+    } else {
+      dev.log('desligado?');
+      return Icon(BoxIcons.bx_wifi_off, color: Colors.white, size: 35);
+    }
   }
 
   String showFileSystemException(String message) {

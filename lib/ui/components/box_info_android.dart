@@ -19,7 +19,6 @@ class BoxInfoAndroid extends StatelessWidget {
     final Size size = MediaQuery.of(context).size;
     return AnimatedContainer(
       duration: Duration(milliseconds: 550),
-
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
