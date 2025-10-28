@@ -39,7 +39,7 @@ class BoxCreateFolders extends StatelessWidget {
             children: [
               Icon(EvaIcons.folder_add_outline, color: AppColor.pupleColor),
               SizedBox(width: 8),
-              Text('Criar nova Pasta'),
+              Text('Create New Folder'),
             ],
           ),
           Row(
@@ -72,7 +72,7 @@ class BoxCreateFolders extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      'Criar',
+                      'Create',
                       style: TextStyle(
                         color: AppColor.whiteColor,
                         fontSize: 13,

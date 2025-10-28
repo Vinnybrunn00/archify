@@ -26,7 +26,7 @@ class StatisticForNerds extends StatelessWidget {
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Estatísticas do Android'),
+        title: Text('Android Statistics'),
         titleTextStyle: TextStyle(color: AppColor.whiteColor, fontSize: 18),
         backgroundColor: Color(0xff202124),
         iconTheme: IconThemeData(color: AppColor.whiteColor),

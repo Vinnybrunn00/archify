@@ -25,7 +25,7 @@ class BoxProcessFrequence extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Núcleo $index',
+            'Core $index',
             style: TextStyle(
               color: AppColor.whiteColor,
               fontSize: 12,

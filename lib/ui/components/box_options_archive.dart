@@ -39,26 +39,26 @@ class BoxOptionsArchive extends StatelessWidget {
           children: [
             BtOptionsArchive(
               onTap: onMove,
-              title: 'Mover',
+              title: 'Move',
               iconData: Bootstrap.folder_symlink,
             ),
 
             BtOptionsArchive(
               isDirectory: isDirectory,
-              title: 'Compartilhar',
+              title: 'Share',
               onTap: onShare,
               iconData: BoxIcons.bx_share,
             ),
 
             BtOptionsArchive(
-              title: 'Deletar',
+              title: 'Delete',
               onTap: onDelete,
               iconData: FontAwesome.trash_can,
             ),
 
             BtOptionsArchive(
               onTapDown: onMore,
-              title: 'Mais',
+              title: 'More',
               iconSize: 20,
               iconData: Iconsax.more_square_outline,
             ),

@@ -1,5 +1,3 @@
-
-
 import 'package:archify/constants/constants_color.dart';
 import 'package:archify/ui/components/info_battery.dart';
 import 'package:archify/ui/components/stack_battery.dart';
@@ -18,12 +16,12 @@ class BoxBattery extends StatelessWidget {
       color: Colors.cyanAccent,
     ),
     InfoBattery(
-      info: "Saúde: ${dataStream['health']}",
+      info: "Health: ${dataStream['health']}",
       iconData: OctIcons.heart,
       color: Colors.redAccent,
     ),
     InfoBattery(
-      info: "Tecnologia: ${dataStream['technology']}",
+      info: "Technology: ${dataStream['technology']}",
       iconData: IonIcons.finger_print,
       color: AppColor.greyColor,
     ),
@@ -56,7 +54,7 @@ class BoxBattery extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Bateria',
+            'Battery',
             style: TextStyle(
               color: AppColor.whiteColor,
               fontSize: 11.5,

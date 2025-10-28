@@ -234,10 +234,10 @@ class BatteryStreamHandler(private val context: Context) : EventChannel.StreamHa
         // 3. Fonte de Energia
         val plugType = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1)
         val plugTypeString = when (plugType) {
-            BatteryManager.BATTERY_PLUGGED_AC -> "Cabo: AC"
+            BatteryManager.BATTERY_PLUGGED_AC -> "Cable: AC"
             BatteryManager.BATTERY_PLUGGED_USB -> "USB"
-            BatteryManager.BATTERY_PLUGGED_WIRELESS -> "Sem Fio"
-            0 -> "Desconectado"
+            BatteryManager.BATTERY_PLUGGED_WIRELESS -> "Wireless"
+            0 -> "Disconnected"
             else -> "Código: $plugType"
         }
         infoMap["plugged_type"] = plugTypeString

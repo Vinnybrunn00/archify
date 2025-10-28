@@ -101,7 +101,7 @@ class BoxMemory extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '$memoryUsed GB Usado',
+                      '$memoryUsed GB Used',
                       style: TextStyle(
                         color: AppColor.whiteColor,
                         fontSize: 12,
@@ -129,7 +129,7 @@ class BoxMemory extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '$memoryAvailable GB Livre',
+                      '$memoryAvailable GB Free',
                       style: TextStyle(
                         color: AppColor.whiteColor,
                         fontSize: 12,

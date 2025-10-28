@@ -1,4 +1,3 @@
-
 import 'dart:io';
 import 'package:archify/core/services/files_services.dart';
 import 'package:archify/core/services/info_device.dart';
@@ -217,7 +216,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         ),
                         child: Center(
                           child: Text(
-                            'Armazenamento Raiz (/)',
+                            'Root Storage (/)',
                             style: TextStyle(
                               color: AppColor.whiteColor,
                               fontSize: 12,
@@ -291,7 +290,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   ),
                   Expanded(
                     child: _listFolders.isEmpty
-                        ? Text('Diretório vazio')
+                        ? Text('Empty directory')
                         : ListView.builder(
                             itemCount: _listFolders.length,
                             itemBuilder: (context, index) {

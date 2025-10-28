@@ -64,7 +64,7 @@ class BoxWifiInfo extends StatelessWidget {
                                   }
                                 : null,
                             child: Text(
-                              setSSId ? 'clique para autorizar' : ssid,
+                              setSSId ? 'click to authorize' : ssid,
                               style: TextStyle(
                                 color: AppColor.whiteColor,
                                 fontSize: 17,
@@ -102,18 +102,18 @@ class BoxWifiInfo extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Velocidade: ^$speed',
+                            'Speed: ^$speed',
                             style: TextStyle(
                               color: AppColor.whiteColor,
-                              fontSize: 10,
+                              fontSize: 11,
                             ),
                           ),
                           SizedBox(width: 8),
                           Text(
-                            'Potência: $dbm',
+                            'Power: $dbm',
                             style: TextStyle(
                               color: AppColor.whiteColor,
-                              fontSize: 10,
+                              fontSize: 11,
                             ),
                           ),
                         ],

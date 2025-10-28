@@ -35,7 +35,7 @@ class BoxStorage extends StatelessWidget {
 
             children: [
               Text(
-                'Memoria Interna',
+                'Internal Memory',
                 style: TextStyle(color: AppColor.whiteColor, fontSize: 15),
               ),
               SizedBox(height: 8),
@@ -68,7 +68,7 @@ class BoxStorage extends StatelessWidget {
                   ),
                   SizedBox(width: 12),
                   Text(
-                    'Usada: ${used.toStringAsFixed(1)} GB',
+                    'Used: ${used.toStringAsFixed(1)} GB',
                     style: TextStyle(
                       color: AppColor.whiteColor,
                       fontSize: 10.5,
