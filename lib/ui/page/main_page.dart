@@ -1,17 +1,17 @@
+
 import 'dart:io';
+import 'package:archify/core/models/files_directory_manager.dart';
 import 'package:archify/core/services/files_services.dart';
 import 'package:archify/core/services/info_device.dart';
 import 'package:archify/ui/components/box_options_archive.dart';
+import 'package:archify/ui/components/box_storage_msg_root.dart';
 import 'package:archify/ui/components/mini_bt_icon.dart';
 import 'package:archify/ui/page/statistic.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:archify/constants/constants_color.dart';
-import 'package:archify/constants/constants_regex.dart';
-import 'package:archify/core/models/file_types.dart';
 import 'package:archify/ui/components/box_create_items.dart';
 import 'package:archify/ui/components/box_items.dart';
-import 'package:archify/ui/view/app_pdf_view.dart';
 import 'package:archify/utils/utils.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -34,13 +34,11 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController _textController = TextEditingController();
   final FilesServices _filesServices = FilesServices();
   final InfoDevice _infoDevice = InfoDevice();
   final Utils _utils = Utils();
-
   final TextEditingController _newNameController = TextEditingController();
-
   final ScrollController _scrollController = ScrollController();
 
   bool _isValid = false;
@@ -79,7 +77,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       setState(() {
         _listFolders = listFolders;
 
-        _controller.clear();
+        _textController.clear();
         _isValid = false;
       });
     }
@@ -88,7 +86,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   void _update() {
     setState(() {
       _listFolders = widget.listItems!;
-      _controller.clear();
+      _textController.clear();
       _isValid = false;
     });
   }
@@ -96,6 +94,37 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   void _selectDisable() {
     setState(() => _index = null);
     FocusScope.of(context).unfocus();
+  }
+
+  void _onLongPress({
+    required int index,
+    required bool isSelected,
+    required FilesDirectoryManager directoryManager,
+  }) {
+    setState(() {
+      _isDirectory = directoryManager.isDirectory;
+      _nameFile = directoryManager.nameFile;
+
+      if (isSelected) {
+        _index = null;
+      } else {
+        _index = index;
+        _path = directoryManager.path;
+      }
+      _isLoading = !_isLoading;
+    });
+
+    if (!isSelected) {
+      Future.delayed(Duration(milliseconds: 680), () {
+        setState(() {
+          _isLoading = !_isLoading;
+        });
+      });
+    } else {
+      setState(() {
+        _isLoading = !_isLoading;
+      });
+    }
   }
 
   AnimationController? _controllerAnimation;
@@ -206,24 +235,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                 children: [
                   Row(
                     children: [
-                      Container(
-                        margin: EdgeInsets.only(left: 8),
-                        padding: EdgeInsets.only(left: 8, right: 8),
-                        height: 25,
-                        decoration: BoxDecoration(
-                          color: AppColor.pupleColor,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Root Storage (/)',
-                            style: TextStyle(
-                              color: AppColor.whiteColor,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ),
+                      BoxStorageMsgRoot(),
 
                       if (widget.splitFiles != null) ...[
                         widget.splitFiles![1].split('/').isEmpty
@@ -250,7 +262,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     ],
                   ),
                   BoxCreateFolders(
-                    controller: _controller,
+                    controller: _textController,
                     colorButtonCreateFolder: _isValid
                         ? AppColor.pupleColor
                         : AppColor.pupleLowColor,
@@ -269,14 +281,14 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                             FocusScope.of(context).unfocus();
 
                             final exist = await _filesServices.createFolder(
-                              _controller.text,
+                              _textController.text,
                               widget.path,
                             );
 
                             if (exist != null && context.mounted) {
                               _utils.showMessageError(
                                 context,
-                                message: _filesServices.errorMessage!,
+                                message: _filesServices.errorMessage ?? exist,
                               );
                             }
 
@@ -289,107 +301,37 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         : null,
                   ),
                   Expanded(
-                    child: _listFolders.isEmpty
-                        ? Text('Empty directory')
-                        : ListView.builder(
+                    child: _listFolders.isNotEmpty
+                        ? ListView.builder(
                             itemCount: _listFolders.length,
                             itemBuilder: (context, index) {
-                              String nameFile = _listFolders[index].path
-                                  .split('/')
-                                  .last;
-                              String path = _listFolders[index].path;
-
-                              final Directory directory = Directory(path);
-                              final File file = File(path);
-
-                              FileStat fileStat = file.statSync();
-                              FileStat dicStats = directory.statSync();
-
-                              bool isDirectory =
-                                  dicStats.type ==
-                                  FileSystemEntityType.directory;
-
-                              final FileTypes fileTypes = FileTypes(
-                                isImage: imageExtensions.hasMatch(path),
-                                isPdf: pdfExtRegex.hasMatch(path),
-                                isVideo: videoExtRegex.hasMatch(path),
-                                isAudio: audioExtRegex.hasMatch(path),
-                                isText: textExtRegex.hasMatch(path),
-                                isCode: codeExtRegex.hasMatch(path),
-                              );
-
-                              final splitFiles = _listFolders[index].path.split(
-                                '/com.vindev.archify/files',
-                              );
+                              final FilesDirectoryManager directoryManager =
+                                  FilesDirectoryManager(
+                                    fileEntity: _listFolders[index],
+                                  );
 
                               final bool isSelected = _index == index;
 
                               return BoxItems(
-                                onLongPress: () {
-                                  setState(() {
-                                    _isDirectory = isDirectory;
-                                    _nameFile = nameFile;
-
-                                    if (isSelected) {
-                                      _index = null;
-                                    } else {
-                                      _index = index;
-                                      _path = path;
-                                    }
-                                    _isLoading = !_isLoading;
-                                  });
-
-                                  if (!isSelected) {
-                                    Future.delayed(
-                                      Duration(milliseconds: 680),
-                                      () {
-                                        setState(() {
-                                          _isLoading = !_isLoading;
-                                        });
-                                      },
-                                    );
-                                  } else {
-                                    setState(() {
-                                      _isLoading = !_isLoading;
-                                    });
-                                  }
-                                },
-                                icon: _utils.leading(
-                                  dicStats.type,
-                                  file,
-                                  fileTypes,
+                                onLongPress: () => _onLongPress(
+                                  index: index,
+                                  isSelected: isSelected,
+                                  directoryManager: directoryManager,
                                 ),
-                                name: nameFile,
-                                fileChanged: fileStat.modified,
-                                sizeFile: fileStat.size,
+                                icon: directoryManager.leading(),
+                                name: directoryManager.nameFile,
+                                fileChanged: directoryManager.modified,
+                                sizeFile: directoryManager.size,
                                 isSelected: isSelected,
                                 onTap: _index == null
-                                    ? () {
-                                        // open folder
-                                        if (isDirectory) {
-                                          _utils.goToRoutePageWithOutAnimation(
-                                            context,
-                                            route: MainPage(
-                                              path: path,
-                                              name: nameFile,
-                                              splitFiles: splitFiles,
-                                              listItems: directory.listSync(),
-                                            ),
-                                          );
-                                        }
-
-                                        // open pdf file (only android)
-                                        if (fileTypes.isPdf) {
-                                          _utils.goToRoutePageWithOutAnimation(
-                                            context,
-                                            route: PdfViewer(path: path),
-                                          );
-                                        }
-                                      }
+                                    ? () => directoryManager.openFilesAndFolder(
+                                        context,
+                                      )
                                     : null,
                               );
                             },
-                          ),
+                          )
+                        : Text('Empty directory'),
                   ),
                 ],
               ),
@@ -410,7 +352,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   0,
                 ),
                 onMove: () {},
-
                 onShare: () async {
                   await _filesServices.onShareOnlyFile(
                     widget.path ?? _path,
@@ -456,9 +397,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         size: size,
                         newNameController: _newNameController,
                         nameFile: _nameFile,
-                        onCancel: () {
-                          Navigator.of(context).pop();
-                        },
+                        onCancel: () => Navigator.of(context).pop(),
                         onRename: () async {
                           await _filesServices.renameFileOrFolder(
                             isDirectory: _isDirectory,

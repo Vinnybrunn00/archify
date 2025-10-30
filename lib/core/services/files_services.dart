@@ -1,4 +1,3 @@
-
 import 'dart:io';
 import 'package:archify/core/services/interfaces/file_service_interface.dart';
 import 'package:archify/utils/utils.dart';

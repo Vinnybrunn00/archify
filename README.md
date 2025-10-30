@@ -43,12 +43,3 @@ For the application to function correctly, your device must meet the following r
 
 * **Android:** Version 6.0 (Marshmallow) or higher.
 * **Disk Space:** Minimum of 80MB free for app cache and data.
-
-## 🛠️ Technologies Used
-
-This project was built using the following technologies:
-
-* **Framework:** Flutter (Dart and Kotlin)
-* **Other Libraries:**
-    * `permission_handler`: For necessary permissions in the app.
-    * `flutter_pdfview`: For the embedded PDF viewer.
