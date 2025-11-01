@@ -36,7 +36,7 @@ class FilesDirectoryManager with ChangeNotifier {
 
   List<String> get _splitFiles => path.split('/com.vindev.archify/files');
 
-  FileTypes get fileTypes => FileTypes(
+  FileTypes get _fileTypes => FileTypes(
     isImage: imageExtensions.hasMatch(path),
     isPdf: pdfExtRegex.hasMatch(path),
     isVideo: videoExtRegex.hasMatch(path),
@@ -60,7 +60,7 @@ class FilesDirectoryManager with ChangeNotifier {
     }
 
     // open PDF file (only android)
-    if (fileTypes.isPdf) {
+    if (_fileTypes.isPdf) {
       _utils.goToRoutePageWithOutAnimation(
         context,
         route: PdfViewer(path: path),
@@ -71,7 +71,7 @@ class FilesDirectoryManager with ChangeNotifier {
   Widget? leading() {
     switch (_dicType) {
       case FileSystemEntityType.file:
-        if (fileTypes.isAudio) {
+        if (_fileTypes.isAudio) {
           return Icon(
             EvaIcons.music_outline,
             color: AppColor.pupleColor,
@@ -79,7 +79,7 @@ class FilesDirectoryManager with ChangeNotifier {
           );
         }
 
-        if (fileTypes.isVideo) {
+        if (_fileTypes.isVideo) {
           return Icon(
             EvaIcons.video_outline,
             color: AppColor.pupleColor,
@@ -87,14 +87,14 @@ class FilesDirectoryManager with ChangeNotifier {
           );
         }
 
-        if (fileTypes.isText) {
+        if (_fileTypes.isText) {
           return Icon(
             EvaIcons.text_outline,
             color: AppColor.pupleColor,
             size: 22,
           );
         }
-        if (fileTypes.isPdf) {
+        if (_fileTypes.isPdf) {
           return Icon(
             FontAwesome.file_pdf,
             color: AppColor.pupleColor,

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:archify/ui/page/main_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ArchifyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class ArchifyApp extends StatelessWidget {
+  const ArchifyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,6 @@ class MyApp extends StatelessWidget {
       title: 'Archify',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        // textTheme: GoogleFonts.interTextTheme(),
       ),
       home: MainPage(),
     );

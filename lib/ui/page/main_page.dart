@@ -1,4 +1,4 @@
-
+import 'dart:developer';
 import 'dart:io';
 import 'package:archify/core/models/files_directory_manager.dart';
 import 'package:archify/core/services/files_services.dart';
@@ -142,8 +142,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       _loadListFolders();
     }
 
-    _addPostFrameCallback();
-
     _controllerAnimation = AnimationController(
       duration: const Duration(milliseconds: 250),
       vsync: this,
@@ -172,259 +170,274 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 50,
-        backgroundColor: Colors.white,
-        leading: widget.name == null && _index == null
-            ? null
-            : IconButton(
-                onPressed: _index != null ? () => _selectDisable() : _closePage,
-                icon: Icon(Icons.arrow_back),
-              ),
-        title: Text(
-          _index != null ? _path.split('/').last : (widget.name ?? 'Home Page'),
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: _index != null ? 18 : 20,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        await _controllerAnimation?.reverse();
+        await Future.delayed(Duration(milliseconds: 280));
+
+        if (context.mounted) {
+          Navigator.pop(context);
+          FocusScope.of(context).unfocus();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: 50,
+          backgroundColor: Colors.white,
+          leading: widget.name == null && _index == null
+              ? null
+              : IconButton(
+                  onPressed: _index != null
+                      ? () => _selectDisable()
+                      : _closePage,
+                  icon: Icon(Icons.arrow_back),
+                ),
+          title: Text(
+            _index != null
+                ? _path.split('/').last
+                : (widget.name ?? 'Home Page'),
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: _index != null ? 18 : 20,
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
-          overflow: TextOverflow.ellipsis,
-        ),
-        actionsPadding: EdgeInsets.only(right: 20),
-        actions: [
-          MiniBtIcon(
-            onTap: () async {
-              await _filesServices.onSelectAndCopyFile(widget.path);
+          actionsPadding: EdgeInsets.only(right: 20),
+          actions: [
+            MiniBtIcon(
+              onTap: () async {
+                await _filesServices.onSelectAndCopyFile(widget.path);
 
-              if (_filesServices.errorMessage == null) {
-                _loadListFolders();
+                if (_filesServices.errorMessage == null) {
+                  _loadListFolders();
 
-                if (widget.listItems != null) {
-                  _update();
+                  if (widget.listItems != null) {
+                    _update();
+                  }
+                } else {
+                  if (!context.mounted) return;
+
+                  _utils.showMessageError(
+                    context,
+                    message: _filesServices.errorMessage!,
+                  );
                 }
-              } else {
-                if (!context.mounted) return;
-
-                _utils.showMessageError(
+              },
+              icon: EvaIcons.cloud_upload_outline,
+            ),
+            SizedBox(width: 15),
+            MiniBtIcon(
+              onTap: () {
+                Navigator.of(
                   context,
-                  message: _filesServices.errorMessage!,
-                );
-              }
-            },
-            icon: EvaIcons.cloud_upload_outline,
-          ),
-          SizedBox(width: 15),
-          MiniBtIcon(
-            onTap: () {
-              Navigator.of(
-                context,
-              ).push(MaterialPageRoute(builder: (_) => StatisticForNerds()));
-            },
-            icon: MingCute.bug_line,
-          ),
-        ],
-      ),
-      backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: SizedBox.expand(
-          child: Stack(
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      BoxStorageMsgRoot(),
+                ).push(MaterialPageRoute(builder: (_) => StatisticForNerds()));
+              },
+              icon: MingCute.bug_line,
+            ),
+          ],
+        ),
+        backgroundColor: Colors.white,
+        resizeToAvoidBottomInset: true,
+        body: SafeArea(
+          child: SizedBox.expand(
+            child: Stack(
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        BoxStorageMsgRoot(),
 
-                      if (widget.splitFiles != null) ...[
-                        widget.splitFiles![1].split('/').isEmpty
-                            ? Container()
-                            : Icon(Icons.keyboard_arrow_right, size: 20),
+                        if (widget.splitFiles != null) ...[
+                          widget.splitFiles![1].split('/').isEmpty
+                              ? Container()
+                              : Icon(Icons.keyboard_arrow_right, size: 20),
 
-                        Expanded(
-                          child: SingleChildScrollView(
-                            controller: _scrollController,
-                            scrollDirection: Axis.horizontal,
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 12),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: _utils.sliderAnimationPath(
-                                  widget.splitFiles,
-                                  _animation,
+                          Expanded(
+                            child: SingleChildScrollView(
+                              controller: _scrollController,
+                              scrollDirection: Axis.horizontal,
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 12),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: _utils.sliderAnimationPath(
+                                    widget.splitFiles,
+                                    _animation,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
+                        ],
                       ],
-                    ],
-                  ),
-                  BoxCreateFolders(
-                    controller: _textController,
-                    colorButtonCreateFolder: _isValid
-                        ? AppColor.pupleColor
-                        : AppColor.pupleLowColor,
-                    onChanged: (String newFolder) {
-                      setState(() {
-                        if (newFolder.isNotEmpty) {
-                          _isValid = true;
-                        } else {
-                          _isValid = false;
-                        }
-                      });
-                    },
-
-                    onCreateFolder: _isValid
-                        ? () async {
-                            FocusScope.of(context).unfocus();
-
-                            final exist = await _filesServices.createFolder(
-                              _textController.text,
-                              widget.path,
-                            );
-
-                            if (exist != null && context.mounted) {
-                              _utils.showMessageError(
-                                context,
-                                message: _filesServices.errorMessage ?? exist,
-                              );
-                            }
-
-                            _loadListFolders();
-
-                            if (widget.listItems != null) {
-                              _update();
-                            }
+                    ),
+                    BoxCreateFolders(
+                      controller: _textController,
+                      colorButtonCreateFolder: _isValid
+                          ? AppColor.pupleColor
+                          : AppColor.pupleLowColor,
+                      onChanged: (String newFolder) {
+                        setState(() {
+                          if (newFolder.isNotEmpty) {
+                            _isValid = true;
+                          } else {
+                            _isValid = false;
                           }
-                        : null,
-                  ),
-                  Expanded(
-                    child: _listFolders.isNotEmpty
-                        ? ListView.builder(
-                            itemCount: _listFolders.length,
-                            itemBuilder: (context, index) {
-                              final FilesDirectoryManager directoryManager =
-                                  FilesDirectoryManager(
-                                    fileEntity: _listFolders[index],
-                                  );
+                        });
+                      },
 
-                              final bool isSelected = _index == index;
+                      onCreateFolder: _isValid
+                          ? () async {
+                              FocusScope.of(context).unfocus();
 
-                              return BoxItems(
-                                onLongPress: () => _onLongPress(
-                                  index: index,
-                                  isSelected: isSelected,
-                                  directoryManager: directoryManager,
-                                ),
-                                icon: directoryManager.leading(),
-                                name: directoryManager.nameFile,
-                                fileChanged: directoryManager.modified,
-                                sizeFile: directoryManager.size,
-                                isSelected: isSelected,
-                                onTap: _index == null
-                                    ? () => directoryManager.openFilesAndFolder(
-                                        context,
-                                      )
-                                    : null,
+                              final exist = await _filesServices.createFolder(
+                                _textController.text,
+                                widget.path,
                               );
-                            },
-                          )
-                        : Text('Empty directory'),
+
+                              if (exist != null && context.mounted) {
+                                _utils.showMessageError(
+                                  context,
+                                  message: _filesServices.errorMessage ?? exist,
+                                );
+                              }
+
+                              _loadListFolders();
+
+                              if (widget.listItems != null) {
+                                _update();
+                              }
+                            }
+                          : null,
+                    ),
+                    Expanded(
+                      child: _listFolders.isNotEmpty
+                          ? ListView.builder(
+                              itemCount: _listFolders.length,
+                              itemBuilder: (context, index) {
+                                final FilesDirectoryManager directoryManager =
+                                    FilesDirectoryManager(
+                                      fileEntity: _listFolders[index],
+                                    );
+
+                                final bool isSelected = _index == index;
+
+                                return BoxItems(
+                                  icon: directoryManager.leading(),
+                                  name: directoryManager.nameFile,
+                                  fileChanged: directoryManager.modified,
+                                  sizeFile: directoryManager.size,
+                                  isSelected: isSelected,
+                                  onLongPress: () => _onLongPress(
+                                    index: index,
+                                    isSelected: isSelected,
+                                    directoryManager: directoryManager,
+                                  ),
+                                  onTap: _index == null
+                                      ? () => directoryManager
+                                            .openFilesAndFolder(context)
+                                      : null,
+                                );
+                              },
+                            )
+                          : Text('Empty directory'),
+                    ),
+                  ],
+                ),
+
+                _isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: AppColor.greenColor,
+                        ),
+                      )
+                    : Container(),
+
+                BoxOptionsArchive(
+                  isDirectory: _isDirectory,
+                  transform: Matrix4.translationValues(
+                    0,
+                    _index != null ? 0 : size.height,
+                    0,
                   ),
-                ],
-              ),
-
-              _isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(
-                        color: AppColor.greenColor,
-                      ),
-                    )
-                  : Container(),
-
-              BoxOptionsArchive(
-                isDirectory: _isDirectory,
-                transform: Matrix4.translationValues(
-                  0,
-                  _index != null ? 0 : size.height,
-                  0,
-                ),
-                onMove: () {},
-                onShare: () async {
-                  await _filesServices.onShareOnlyFile(
-                    widget.path ?? _path,
-                    _nameFile,
-                  );
-                },
-
-                onDelete: () async => await _utils.showModal(
-                  context,
-                  size: size,
-                  onDelete: () async {
-                    await _filesServices.delete(widget.path ?? _path);
-
-                    if (_filesServices.errorMessage != null &&
-                        context.mounted) {
-                      _utils.showMessageError(
-                        context,
-                        message: _filesServices.errorMessage!,
-                      );
-                    }
-
-                    _loadListFolders();
-
-                    _selectDisable();
-
-                    if (context.mounted) {
-                      Navigator.of(context).pop();
-                    }
+                  onMove: () {},
+                  onShare: () async {
+                    await _filesServices.onShareOnlyFile(
+                      widget.path ?? _path,
+                      _nameFile,
+                    );
                   },
-                ),
 
-                onMore: (TapDownDetails position) async {
-                  await _utils.showMenuDropUp(
+                  onDelete: () async => await _utils.showModal(
                     context,
-                    position: position,
-                    onRename: () async {
-                      final String path = widget.path ?? _path;
+                    size: size,
+                    onDelete: () async {
+                      await _filesServices.delete(widget.path ?? _path);
+
+                      if (_filesServices.errorMessage != null &&
+                          context.mounted) {
+                        _utils.showMessageError(
+                          context,
+                          message: _filesServices.errorMessage!,
+                        );
+                      }
+
+                      _loadListFolders();
 
                       _selectDisable();
 
-                      await _utils.showModalButtonSheetRename(
-                        context,
-                        size: size,
-                        newNameController: _newNameController,
-                        nameFile: _nameFile,
-                        onCancel: () => Navigator.of(context).pop(),
-                        onRename: () async {
-                          await _filesServices.renameFileOrFolder(
-                            isDirectory: _isDirectory,
-                            newName: _newNameController.text,
-                            path: path,
-                          );
-
-                          if (_filesServices.errorMessage != null &&
-                              context.mounted) {
-                            _utils.showMessageError(
-                              context,
-                              message: _filesServices.errorMessage!,
-                            );
-                          }
-
-                          _newNameController.clear();
-                          _loadListFolders();
-
-                          if (context.mounted) Navigator.of(context).pop();
-                        },
-                      );
-                      _loadListFolders();
+                      if (context.mounted) {
+                        Navigator.of(context).pop();
+                      }
                     },
-                  );
-                },
-              ),
-            ],
+                  ),
+
+                  onMore: (TapDownDetails position) async {
+                    await _utils.showMenuDropUp(
+                      context,
+                      position: position,
+                      onRename: () async {
+                        final String path = widget.path ?? _path;
+
+                        _selectDisable();
+
+                        await _utils.showModalButtonSheetRename(
+                          context,
+                          size: size,
+                          newNameController: _newNameController,
+                          nameFile: _nameFile,
+                          onCancel: () => Navigator.of(context).pop(),
+                          onRename: () async {
+                            await _filesServices.renameFileOrFolder(
+                              isDirectory: _isDirectory,
+                              newName: _newNameController.text,
+                              path: path,
+                            );
+
+                            if (_filesServices.errorMessage != null &&
+                                context.mounted) {
+                              _utils.showMessageError(
+                                context,
+                                message: _filesServices.errorMessage!,
+                              );
+                            }
+
+                            _newNameController.clear();
+                            _loadListFolders();
+
+                            if (context.mounted) Navigator.of(context).pop();
+                          },
+                        );
+                        _loadListFolders();
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
