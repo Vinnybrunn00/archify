@@ -4,7 +4,12 @@ import 'package:archify/core/models/device.dart';
 import 'package:archify/core/models/memory.dart';
 import 'package:archify/core/models/network.dart';
 import 'package:archify/core/models/storage.dart';
-import 'package:archify/core/services/info_device.dart';
+import 'package:archify/core/services/monitor/battery_service.dart';
+import 'package:archify/core/services/monitor/cpu_services.dart';
+import 'package:archify/core/services/monitor/info_device.dart';
+import 'package:archify/core/services/monitor/memory_service.dart';
+import 'package:archify/core/services/monitor/storage_service.dart';
+import 'package:archify/core/services/monitor/wifi_service.dart';
 import 'package:archify/ui/components/box_battery.dart';
 import 'package:archify/ui/components/box_info_android.dart';
 import 'package:archify/ui/components/box_memory.dart';
@@ -18,6 +23,11 @@ class StatisticForNerds extends StatelessWidget {
   StatisticForNerds({super.key});
 
   final InfoDevice _infoDevice = InfoDevice();
+  final StorageService _storageService = StorageService();
+  final MemoryService _memoryService = MemoryService();
+  final BatteryService _batteryService = BatteryService();
+  final WifiService _wifiService = WifiService();
+  final CPUServices _cpuServices = CPUServices();
 
   final List<double> _memoryList = [];
 
@@ -42,7 +52,7 @@ class StatisticForNerds extends StatelessWidget {
                 children: [
                   // stream Battery
                   StreamBuilder(
-                    stream: _infoDevice.batteryInfoStream,
+                    stream: _batteryService.batteryInfoStream,
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) return Container();
 
@@ -86,7 +96,7 @@ class StatisticForNerds extends StatelessWidget {
 
               // Stream Memory
               StreamBuilder(
-                stream: _infoDevice.getStreamMemory,
+                stream: _memoryService.getStreamMemory,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return Container();
 
@@ -135,7 +145,7 @@ class StatisticForNerds extends StatelessWidget {
               SizedBox(height: 10),
 
               StreamBuilder(
-                stream: _infoDevice.frequenceCpuStream,
+                stream: _cpuServices.frequenceCpuStream,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return Container();
 
@@ -167,7 +177,7 @@ class StatisticForNerds extends StatelessWidget {
               SizedBox(height: 10),
 
               StreamBuilder(
-                stream: _infoDevice.widfiInfoStream,
+                stream: _wifiService.widfiInfoStream,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return Container();
                   Map<String, dynamic>? data = snapshot.data;
@@ -193,7 +203,7 @@ class StatisticForNerds extends StatelessWidget {
               SizedBox(height: 10),
 
               StreamBuilder(
-                stream: _infoDevice.getStreamStorage,
+                stream: _storageService.getStreamStorage,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return Container();
 

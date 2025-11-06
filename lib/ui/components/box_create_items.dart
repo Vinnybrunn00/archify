@@ -1,3 +1,4 @@
+import 'package:archify/constants/constants_value.dart';
 import 'package:archify/ui/components/input_text.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -29,7 +30,11 @@ class BoxCreateFolders extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColor.blackColorAlpha55),
+        border: Border.all(
+          color: isDarkMode.value
+              ? AppColor.pupleColor
+              : AppColor.blackColor.withAlpha(90),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,7 +44,14 @@ class BoxCreateFolders extends StatelessWidget {
             children: [
               Icon(EvaIcons.folder_add_outline, color: AppColor.pupleColor),
               SizedBox(width: 8),
-              Text('Create New Folder'),
+              Text(
+                'Create New Folder',
+                style: TextStyle(
+                  color: isDarkMode.value
+                      ? AppColor.whiteColor
+                      : AppColor.pupleColor,
+                ),
+              ),
             ],
           ),
           Row(
@@ -53,6 +65,9 @@ class BoxCreateFolders extends StatelessWidget {
                     borderRadius: BorderRadius.circular(18),
                   ),
                   child: InputText(
+                    color: isDarkMode.value
+                        ? AppColor.whiteColor.withAlpha(90)
+                        : AppColor.blackColorAlpha100,
                     hintText: 'Ex: Primeira semana',
                     controller: controller,
                     onChanged: onChanged,

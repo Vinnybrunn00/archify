@@ -1,8 +1,11 @@
-import 'dart:developer';
 import 'dart:io';
+import 'package:archify/constants/constants_value.dart';
 import 'package:archify/core/models/files_directory_manager.dart';
+import 'package:archify/core/services/file_service_manager/create_folder.dart';
+import 'package:archify/core/services/file_service_manager/delete_file_folder.dart';
+import 'package:archify/core/services/file_service_manager/rename_file_folder.dart';
+import 'package:archify/core/services/file_service_manager/select_copy_file.dart';
 import 'package:archify/core/services/files_services.dart';
-import 'package:archify/core/services/info_device.dart';
 import 'package:archify/ui/components/box_options_archive.dart';
 import 'package:archify/ui/components/box_storage_msg_root.dart';
 import 'package:archify/ui/components/mini_bt_icon.dart';
@@ -36,7 +39,6 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   final TextEditingController _textController = TextEditingController();
   final FilesServices _filesServices = FilesServices();
-  final InfoDevice _infoDevice = InfoDevice();
   final Utils _utils = Utils();
   final TextEditingController _newNameController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -134,13 +136,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    _infoDevice.test();
-
     if (widget.listItems != null) {
       _update();
     } else {
       _loadListFolders();
     }
+
+    _addPostFrameCallback();
 
     _controllerAnimation = AnimationController(
       duration: const Duration(milliseconds: 250),
@@ -182,22 +184,34 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         }
       },
       child: Scaffold(
+        backgroundColor: isDarkMode.value
+            ? AppColor.backgroundColorBlack
+            : AppColor.whiteColor,
         appBar: AppBar(
           toolbarHeight: 50,
-          backgroundColor: Colors.white,
+          elevation: 0,
+          backgroundColor: isDarkMode.value
+              ? AppColor.backgroundColorBlack
+              : AppColor.whiteColor,
           leading: widget.name == null && _index == null
               ? null
               : IconButton(
                   onPressed: _index != null
                       ? () => _selectDisable()
                       : _closePage,
-                  icon: Icon(Icons.arrow_back),
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: isDarkMode.value
+                        ? AppColor.whiteColor
+                        : AppColor.backgroundColorBlack,
+                  ),
                 ),
           title: Text(
-            _index != null
-                ? _path.split('/').last
-                : (widget.name ?? 'Home Page'),
+            _index != null ? _path.split('/').last : (widget.name ?? 'Archify'),
             style: TextStyle(
+              color: isDarkMode.value
+                  ? AppColor.whiteColor
+                  : AppColor.blackColor,
               fontWeight: FontWeight.w600,
               fontSize: _index != null ? 18 : 20,
             ),
@@ -205,11 +219,28 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           ),
           actionsPadding: EdgeInsets.only(right: 20),
           actions: [
+            if (widget.name == null && _index == null)
+              MiniBtIcon(
+                color: isDarkMode.value
+                    ? AppColor.whiteColor
+                    : AppColor.blackColor,
+                onTap: () =>
+                    setState(() => isDarkMode.value = !isDarkMode.value),
+                icon: Icons.light_mode_outlined,
+              ),
+            SizedBox(width: 10),
             MiniBtIcon(
+              color: isDarkMode.value
+                  ? AppColor.whiteColor
+                  : AppColor.blackColor,
               onTap: () async {
-                await _filesServices.onSelectAndCopyFile(widget.path);
+                final SelectCopyFile onSelectAndCopyFile = SelectCopyFile(
+                  path: widget.path,
+                );
 
-                if (_filesServices.errorMessage == null) {
+                await onSelectAndCopyFile.onSelectAndCopy();
+
+                if (onSelectAndCopyFile.errorMessage == null) {
                   _loadListFolders();
 
                   if (widget.listItems != null) {
@@ -220,14 +251,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
                   _utils.showMessageError(
                     context,
-                    message: _filesServices.errorMessage!,
+                    message: onSelectAndCopyFile.errorMessage!,
                   );
                 }
               },
               icon: EvaIcons.cloud_upload_outline,
             ),
-            SizedBox(width: 15),
+            SizedBox(width: 10),
             MiniBtIcon(
+              color: isDarkMode.value
+                  ? AppColor.whiteColor
+                  : AppColor.blackColor,
               onTap: () {
                 Navigator.of(
                   context,
@@ -237,7 +271,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             ),
           ],
         ),
-        backgroundColor: Colors.white,
+
         resizeToAvoidBottomInset: true,
         body: SafeArea(
           child: SizedBox.expand(
@@ -253,7 +287,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         if (widget.splitFiles != null) ...[
                           widget.splitFiles![1].split('/').isEmpty
                               ? Container()
-                              : Icon(Icons.keyboard_arrow_right, size: 20),
+                              : Icon(
+                                  Icons.keyboard_arrow_right,
+                                  size: 20,
+                                  color: isDarkMode.value
+                                      ? AppColor.whiteColor
+                                      : AppColor.blackColor,
+                                ),
 
                           Expanded(
                             child: SingleChildScrollView(
@@ -293,15 +333,18 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                           ? () async {
                               FocusScope.of(context).unfocus();
 
-                              final exist = await _filesServices.createFolder(
-                                _textController.text,
-                                widget.path,
-                              );
+                              final CreateFolderManager createFolder =
+                                  CreateFolderManager(
+                                    newFolder: _textController.text,
+                                    path: widget.path,
+                                  );
+
+                              final String? exist = await createFolder.create();
 
                               if (exist != null && context.mounted) {
                                 _utils.showMessageError(
                                   context,
-                                  message: _filesServices.errorMessage ?? exist,
+                                  message: createFolder.errorMessage ?? exist,
                                 );
                               }
 
@@ -375,13 +418,16 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     context,
                     size: size,
                     onDelete: () async {
-                      await _filesServices.delete(widget.path ?? _path);
+                      final DeleteFileFolder deleteFileFolder =
+                          DeleteFileFolder(path: widget.path ?? _path);
 
-                      if (_filesServices.errorMessage != null &&
+                      await deleteFileFolder.delete();
+
+                      if (deleteFileFolder.errorMessage != null &&
                           context.mounted) {
                         _utils.showMessageError(
                           context,
-                          message: _filesServices.errorMessage!,
+                          message: deleteFileFolder.errorMessage!,
                         );
                       }
 
@@ -411,17 +457,20 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                           nameFile: _nameFile,
                           onCancel: () => Navigator.of(context).pop(),
                           onRename: () async {
-                            await _filesServices.renameFileOrFolder(
-                              isDirectory: _isDirectory,
-                              newName: _newNameController.text,
-                              path: path,
-                            );
+                            final RenameFileFolder renameManager =
+                                RenameFileFolder(
+                                  isDirectory: _isDirectory,
+                                  newName: _newNameController.text,
+                                  path: path,
+                                );
 
-                            if (_filesServices.errorMessage != null &&
+                            await renameManager.rename();
+
+                            if (renameManager.errorMessage != null &&
                                 context.mounted) {
                               _utils.showMessageError(
                                 context,
-                                message: _filesServices.errorMessage!,
+                                message: renameManager.errorMessage!,
                               );
                             }
 

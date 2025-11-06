@@ -12,6 +12,7 @@ class AppColor {
   static const Color blackBlue = Color(0xFF334B68);
   static const Color blackBlueLow = Color(0xff37415c);
   static const Color backgroundColorWhite = Color(0xFFEFEDED);
+  static const Color backgroundColorBlack = Color(0xFF101720);
   static Color blackColorAlpha55 = Colors.black.withAlpha(55);
   static Color blackColorAlpha100 = Colors.black.withAlpha(100);
   static Color blackColorAlpha70 = Colors.black.withAlpha(70);

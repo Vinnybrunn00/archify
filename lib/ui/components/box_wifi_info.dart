@@ -1,7 +1,7 @@
 import 'package:archify/constants/constants_color.dart';
-import 'package:archify/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class BoxWifiInfo extends StatelessWidget {
@@ -13,7 +13,7 @@ class BoxWifiInfo extends StatelessWidget {
   final String speed;
   final bool is5G;
 
-  BoxWifiInfo({
+  const BoxWifiInfo({
     super.key,
     required this.dbm,
     required this.ssid,
@@ -23,8 +23,6 @@ class BoxWifiInfo extends StatelessWidget {
     required this.frequencyMHz,
     required this.ipAddress,
   });
-
-  final Utils _utils = Utils();
 
   bool get setSSId => ssid.contains('unknown');
 
@@ -49,7 +47,7 @@ class BoxWifiInfo extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  _utils.setPotencialdBm(dbm),
+                  setPotencialdBm(dbm),
                   SizedBox(width: 8),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,5 +140,33 @@ class BoxWifiInfo extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget setPotencialdBm(String dbm) {
+    final newValue = int.tryParse(
+      dbm.trim().replaceAll('dBm', '').replaceAll('-', ''),
+    );
+
+    if (newValue == null) {
+      return Icon(BoxIcons.bx_wifi_off, color: Colors.white, size: 35);
+    }
+
+    if (newValue <= 30 || newValue <= 41) {
+      return Icon(BoxIcons.bx_wifi, color: Colors.white, size: 35);
+    } else if (newValue >= 40 || newValue <= 50) {
+      return Icon(BoxIcons.bx_wifi, color: Colors.white, size: 35);
+    } else if (newValue >= 51 || newValue <= 60) {
+      return Icon(BoxIcons.bx_wifi_2, color: Colors.white, size: 35);
+    } else if (newValue >= 61 || newValue <= 67) {
+      return Icon(BoxIcons.bx_wifi_2, color: Colors.white, size: 35);
+    } else if (newValue >= 68 || newValue <= 70) {
+      return Icon(BoxIcons.bx_wifi_1, color: Colors.white, size: 35);
+    } else if (newValue >= 71 || newValue <= 80) {
+      return Icon(BoxIcons.bx_wifi_1, color: Colors.white, size: 35);
+    } else if (newValue >= 80) {
+      return Icon(BoxIcons.bx_wifi_off, color: Colors.white, size: 35);
+    } else {
+      return Icon(BoxIcons.bx_wifi_off, color: Colors.white, size: 35);
+    }
   }
 }

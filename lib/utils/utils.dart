@@ -3,11 +3,8 @@ import 'package:archify/ui/components/box_paths.dart';
 import 'package:archify/ui/components/bt_confirm_or_cancell.dart';
 import 'package:archify/ui/components/input_text.dart';
 import 'package:flutter/material.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:archify/constants/constants_color.dart';
 import 'package:intl/intl.dart';
-
-import 'dart:developer' as dev;
 
 class Utils {
   void showMessageError(BuildContext context, {required String message}) {
@@ -124,7 +121,6 @@ class Utils {
 
   String setFormatHour(DateTime dateTime) {
     String formatData = DateFormat('dd/MM/yyyy HH:mm').format(dateTime);
-
     return formatData;
   }
 
@@ -147,15 +143,6 @@ class Utils {
 
     final value = bytes / math.pow(base, i);
     return '${value.toStringAsFixed(decimals)} ${suffixes[i]}';
-  }
-
-  String convertKBToGB(String kB) {
-    final double factor = 1024 * 1024;
-    String replace = kB.replaceAll('kB', '');
-
-    String gigabytes = (double.parse(replace) / factor).toStringAsFixed(2);
-
-    return gigabytes;
   }
 
   void goToRoutePageWithOutAnimation(
@@ -261,77 +248,5 @@ class Utils {
         ),
       ),
     );
-  }
-
-  Widget setPotencialdBm(String dbm) {
-    final newValue = int.tryParse(
-      dbm.trim().replaceAll('dBm', '').replaceAll('-', ''),
-    );
-
-    if (newValue == null) {
-      dev.log('nulo');
-      return Icon(BoxIcons.bx_wifi_off, color: Colors.white, size: 35);
-    }
-
-    if (newValue <= 30 || newValue <= 41) {
-      return Icon(BoxIcons.bx_wifi, color: Colors.white, size: 35);
-    } else if (newValue >= 40 || newValue <= 50) {
-      return Icon(BoxIcons.bx_wifi, color: Colors.white, size: 35);
-    } else if (newValue >= 51 || newValue <= 60) {
-      return Icon(BoxIcons.bx_wifi_2, color: Colors.white, size: 35);
-    } else if (newValue >= 61 || newValue <= 67) {
-      return Icon(BoxIcons.bx_wifi_2, color: Colors.white, size: 35);
-    } else if (newValue >= 68 || newValue <= 70) {
-      return Icon(BoxIcons.bx_wifi_1, color: Colors.white, size: 35);
-    } else if (newValue >= 71 || newValue <= 80) {
-      return Icon(BoxIcons.bx_wifi_1, color: Colors.white, size: 35);
-    } else if (newValue >= 80) {
-      dev.log('fraco?');
-      return Icon(BoxIcons.bx_wifi_off, color: Colors.white, size: 35);
-    } else {
-      dev.log('desligado?');
-      return Icon(BoxIcons.bx_wifi_off, color: Colors.white, size: 35);
-    }
-  }
-
-  String showFileSystemException(String message) {
-    switch (message) {
-      case 'Cannot open file':
-        return 'Arquivo não pode ser aberto.';
-      case 'Cannot create file':
-        return 'Arquivo não pode ser criado';
-      case 'Cannot delete file':
-        return 'Arquivo não pode ser deletado';
-      case 'Cannot copy file':
-        return 'Arquivo não pode ser copiado';
-      case 'Cannot rename file' || 'Rename failed':
-        return 'Arquivo não pode ser renomeado';
-      case 'Cannot open directory':
-        return 'Pasta não pode ser aberta';
-      case 'Cannot create directory':
-        return 'Pasta não pode ser criada';
-      case 'Cannot delete directory':
-        return 'Pasta não pode ser deletada';
-      case 'Cannot copy directory':
-        return 'Pasta não pode ser copiada';
-      case 'Operation failed':
-        return 'Operação falha';
-      case 'Not a directory':
-        return 'Isso não é um diretório';
-      case 'File exists':
-        return 'Arquivo existente.';
-      case 'No such file or directory':
-        return 'Não existe tal arquivo ou diretório';
-      case 'Permission denied':
-        return 'Você não tem permissão para executar esta ação';
-      case 'Device or resource busy':
-        return 'Dispositivo ou recurso ocupado';
-      case 'No space left on device':
-        return 'Não há espaço disponível no dispositivo';
-      case 'Text file busy':
-        return 'Arquivo de texto ocupado';
-      default:
-        return 'Invalid argument';
-    }
   }
 }

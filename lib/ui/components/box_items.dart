@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:archify/constants/constants_value.dart';
 import 'package:archify/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:archify/constants/constants_color.dart';
@@ -38,7 +37,7 @@ class BoxItems extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           elevation: .5,
           animationDuration: Duration(milliseconds: 550),
-          color: isSelected ? Color(0xff4150F7).withAlpha(50) : Colors.white,
+
           child: GestureDetector(
             child: InkWell(
               onLongPress: onLongPress,
@@ -48,10 +47,17 @@ class BoxItems extends StatelessWidget {
                 height: 70,
                 width: double.infinity,
                 decoration: BoxDecoration(
+                  color: isSelected
+                      ? isDarkMode.value
+                            ? AppColor.backgroundColorBlack.withAlpha(220)
+                            : Color(0xff4150F7).withAlpha(50)
+                      : isDarkMode.value
+                      ? AppColor.backgroundColorBlack
+                      : AppColor.whiteColor,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: Colors.white.withAlpha(150),
-                    width: .3,
+                    width: .8,
                   ),
                 ),
                 child: Row(
@@ -84,7 +90,12 @@ class BoxItems extends StatelessWidget {
                         children: [
                           Text(
                             name,
-                            style: TextStyle(fontSize: 17),
+                            style: TextStyle(
+                              color: isDarkMode.value
+                                  ? AppColor.whiteColor
+                                  : AppColor.blackColor,
+                              fontSize: 17,
+                            ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -93,13 +104,17 @@ class BoxItems extends StatelessWidget {
                               Text(
                                 _utils.setFormatHour(fileChanged),
                                 style: TextStyle(
-                                  color: AppColor.blackColorAlpha100,
+                                  color: isDarkMode.value
+                                      ? AppColor.whiteColor.withAlpha(100)
+                                      : AppColor.blackColorAlpha100,
                                   fontSize: 12.5,
                                 ),
                               ),
                               SizedBox(width: 10),
                               Container(
-                                color: AppColor.blackColorAlpha70,
+                                color: isDarkMode.value
+                                    ? AppColor.whiteColor.withAlpha(100)
+                                    : AppColor.blackColorAlpha70,
                                 height: 15,
                                 width: 1.5,
                               ),
@@ -107,7 +122,9 @@ class BoxItems extends StatelessWidget {
                               Text(
                                 _utils.formatBytes(sizeFile),
                                 style: TextStyle(
-                                  color: AppColor.blackColorAlpha100,
+                                  color: isDarkMode.value
+                                      ? AppColor.whiteColor.withAlpha(100)
+                                      : AppColor.blackColorAlpha100,
                                   fontSize: 12.5,
                                 ),
                               ),

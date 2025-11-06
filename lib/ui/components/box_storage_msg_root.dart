@@ -7,22 +7,19 @@ class BoxStorageMsgRoot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-                        margin: EdgeInsets.only(left: 8),
-                        padding: EdgeInsets.only(left: 8, right: 8),
-                        height: 25,
-                        decoration: BoxDecoration(
-                          color: AppColor.pupleColor,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Root Storage (/)',
-                            style: TextStyle(
-                              color: AppColor.whiteColor,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      );
+      margin: EdgeInsets.only(left: 8),
+      padding: EdgeInsets.only(left: 8, right: 8),
+      height: 25,
+      decoration: BoxDecoration(
+        color: AppColor.pupleColor,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Center(
+        child: Text(
+          'Root Storage (/)',
+          style: TextStyle(color: AppColor.whiteColor, fontSize: 12),
+        ),
+      ),
+    );
   }
 }
