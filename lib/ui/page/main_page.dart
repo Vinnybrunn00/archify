@@ -132,9 +132,15 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   AnimationController? _controllerAnimation;
   Animation<Offset>? _animation;
 
+
+  
+
   @override
   void initState() {
     super.initState();
+
+
+    
 
     if (widget.listItems != null) {
       _update();
@@ -333,18 +339,19 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                           ? () async {
                               FocusScope.of(context).unfocus();
 
-                              final CreateFolderManager createFolder =
+                              final CreateFolderManager folder =
                                   CreateFolderManager(
                                     newFolder: _textController.text,
                                     path: widget.path,
                                   );
 
-                              final String? exist = await createFolder.create();
+                              await folder.create();
 
-                              if (exist != null && context.mounted) {
+                              if (folder.errorMessage != null &&
+                                  context.mounted) {
                                 _utils.showMessageError(
                                   context,
-                                  message: createFolder.errorMessage ?? exist,
+                                  message: folder.errorMessage!,
                                 );
                               }
 

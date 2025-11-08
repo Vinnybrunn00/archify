@@ -3,13 +3,14 @@ import 'package:archify/core/contracts/message_error_interface.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// This class handles folder creation inside a specified path or,
-/// It also maps system-level file exceptions into user-friendly messages.
 class CreateFolderManager implements MessageErrorInterface {
   /// The path where the new folder will be created.
   String? path;
 
   /// The name of the new folder to be created.
   String newFolder;
+
+  String? _errorMessage;
 
   /// Creates an instance of [CreateFolderManager].
   ///
@@ -22,7 +23,7 @@ class CreateFolderManager implements MessageErrorInterface {
   /// It will never be implemented because error handling is delegated.
   /// to [showFileSystemException].
   @override
-  String? get errorMessage => throw UnimplementedError();
+  String? get errorMessage => _errorMessage;
 
   /// Maps a [FileSystemException] message into a user-friendly message.
   ///
@@ -50,10 +51,13 @@ class CreateFolderManager implements MessageErrorInterface {
   /// - The base directory does not exist.
   /// - A folder with the same name already exists.
   /// - Filesystem access or permission issues (handled by [showFileSystemException]).
-  Future<String?> create() async {
+  Future<void> create() async {
     final Directory? directory = await getDownloadsDirectory();
 
-    if (directory == null) return 'Diretório não existe!';
+    if (directory == null) {
+      _errorMessage = 'Diretório não existe!';
+      return;
+    }
 
     try {
       final String files = directory.parent.path;
@@ -63,12 +67,13 @@ class CreateFolderManager implements MessageErrorInterface {
       Directory dicFiles = Directory('$joinPath/$newFolder');
 
       if (await dicFiles.exists()) {
-        return 'Uma pasta com este nome ja existe, tente outro.';
+        _errorMessage = 'Uma pasta com este nome ja existe, tente outro.';
+        return;
       }
       await dicFiles.create();
-      return null;
+      _errorMessage = null;
     } on FileSystemException catch (err) {
-      return showFileSystemException(err.message);
+      _errorMessage = showFileSystemException(err.message);
     }
   }
 }
