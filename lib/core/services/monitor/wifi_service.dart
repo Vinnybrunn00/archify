@@ -14,9 +14,6 @@ import 'package:flutter/services.dart';
 /// allowing applications to monitor Wi-Fi status in real time.
 class WifiService {
   /// The [MethodChannel] used to communicate with the native Android layer.
-  ///
-  /// The channel listens to `'archify/wifi_info'`, which should be implemented
-  /// in the platform-specific code (Kotlin/Java) to return Wi-Fi information.
   final MethodChannel _wifi = MethodChannel('archify/wifi_info');
 
   /// A stream that emits Wi-Fi information once per second.
@@ -37,14 +34,14 @@ class WifiService {
     }).asyncMap((future) => future);
   }
 
-  /// Retrieves Wi-Fi information from the native Android layer.
-  ///
-  /// Calls the platform method `'getWifiInfo'` via [_wifi] and expects
-  /// a `Map<String, dynamic>` with network-related data.
-  ///
-  /// Returns:
-  /// - A map containing Wi-Fi information if the native call succeeds.
-  /// - An empty map if no data is returned.
+  // Retrieves Wi-Fi information from the native Android layer.
+  //
+  // Calls the platform method `'getWifiInfo'` via [_wifi] and expects
+  // a `Map<String, dynamic>` with network-related data.
+  //
+  // Returns:
+  // - A map containing Wi-Fi information if the native call succeeds.
+  // - An empty map if no data is returned.
   Future<Map<String, dynamic>> _getWifiInfo() async {
     final result = await _wifi.invokeMethod('getWifiInfo');
     return Map<String, dynamic>.from(result ?? {});

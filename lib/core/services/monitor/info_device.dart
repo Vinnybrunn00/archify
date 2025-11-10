@@ -6,10 +6,8 @@ import 'package:flutter/services.dart';
 /// and platform-level information, such as manufacturer details,
 /// model name, and CPU statistics.
 class InfoDevice extends CPUServices {
-  //
   /// The [MethodChannel] used to communicate with the native platform layer.
-  ///
-  final MethodChannel device = const MethodChannel('archify/device_info');
+  final MethodChannel _device = const MethodChannel('archify/device_info');
 
   /// Retrieves device information from the native platform and combines it
   /// with CPU data from [getCpuInfo].
@@ -26,7 +24,7 @@ class InfoDevice extends CPUServices {
   Future<Map<String, dynamic>> getDeviceInfo() async {
     await Future.delayed(Duration(seconds: 1));
     try {
-      Map<dynamic, dynamic>? result = await device.invokeMethod(
+      Map<dynamic, dynamic>? result = await _device.invokeMethod(
         'getDeviceInfo',
       );
 
@@ -41,6 +39,4 @@ class InfoDevice extends CPUServices {
       return {'error': 'Falha na chamada de Info: ${e.message}'};
     }
   }
-
-  void test() async {}
 }

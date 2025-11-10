@@ -41,14 +41,6 @@ class FilesServices {
   ///
   /// Throws a [FileSystemException] if the directory does not exist
   /// or cannot be accessed.
-  ///
-  /// Example:
-  /// ```dart
-  /// final items = filesServices.listFolders('/storage/emulated/0/Downloads');
-  /// for (var entity in items) {
-  ///   print(entity.path);
-  /// }
-  /// ```
   List<FileSystemEntity> listFolders(String path) {
     final Directory dicFiles = Directory(path);
     return dicFiles.listSync();

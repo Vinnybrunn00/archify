@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 /// and exposes it as a Dart [Stream] that emits events every second.
 class BatteryService {
   /// The [EventChannel] used to receive battery information
-  /// from the platform-specific implementation.
   final EventChannel _battery = EventChannel('archify/battery_info');
 
   /// A stream that emits battery information updates from the platform.

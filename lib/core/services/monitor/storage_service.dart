@@ -33,15 +33,15 @@ class StorageService {
     }).asyncMap((future) => future);
   }
 
-  /// Fetches the current storage information from the native layer.
-  ///
-  /// This method uses the `'getStorageInfo'` call on the native
-  /// platform channel `'archify/device_info'`.
-  ///
-  /// Returns:
-  /// - A `Map<String, dynamic>` containing storage metrics such as
-  ///   total, used, and available space.
-  /// - In case of a platform error, it returns a map with an `'error'` key.
+  // Fetches the current storage information from the native layer.
+  //
+  // This method uses the 'getStorageInfo' call on the native
+  // platform channel 'archify/device_info'.
+  //
+  // Returns:
+  // - A Map<String, dynamic> containing storage metrics such as
+  //   total, used, and available space.
+  // - In case of a platform error, it returns a map with an 'error' key.
   Future<Map<String, dynamic>> _getStorageInfo() async {
     try {
       final Map<dynamic, dynamic>? result = await _device.invokeMethod(

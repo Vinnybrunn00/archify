@@ -4,9 +4,8 @@ import 'package:flutter/services.dart';
 
 /// This service interacts with both the native platform (via [MethodChannel])
 /// and the local filesystem to gather details about the device’s CPU performance.
-/// It exposes a continuous stream of CPU frequencies for all cores,
 class CPUServices {
-  /// A helper model that provides hardware-related paths and constants.
+  // A helper model that provides hardware-related paths and constants.
   final Hardware _hardware = Hardware();
 
   /// The communication channel used to invoke native platform methods.
@@ -28,13 +27,13 @@ class CPUServices {
     }).asyncMap((future) => future);
   }
 
-  /// Reads the current frequency of each CPU core directly from the filesystem.
-  ///
-  /// This method accesses system files located in the CPU frequency directory,
-  /// typically under `/sys/devices/system/cpu/`.
-  ///
-  /// Returns a list of doubles representing the frequency (in MHz) for each core.
-  /// If a frequency file does not exist or cannot be parsed, it is skipped.
+  // Reads the current frequency of each CPU core directly from the filesystem.
+  //
+  // This method accesses system files located in the CPU frequency directory,
+  // typically under `/sys/devices/system/cpu/`.
+  //
+  // Returns a list of doubles representing the frequency (in MHz) for each core.
+  // If a frequency file does not exist or cannot be parsed, it is skipped.
   Future<List<double>> _getFrequenceCpuInfo() async {
     List<double> listFrequence = [];
 
@@ -42,7 +41,7 @@ class CPUServices {
 
     for (int i = 0; i < getInfo['core_count']; i++) {
       final File file = File(
-        '${_hardware.cpuinfoMaxFreq}/cpu$i/cpufreq/scaling_cur_freq',
+        '${_hardware.cpuSysteminfo}/cpu$i/cpufreq/scaling_cur_freq',
       );
 
       if (await file.exists()) {
@@ -76,6 +75,6 @@ class CPUServices {
     if (result != null) {
       return result.cast<String, dynamic>();
     }
-    return {'error': 'Nenhum dado retornado do nativo.'};
+    return {'error': 'No data was returned from the native source.'};
   }
 }

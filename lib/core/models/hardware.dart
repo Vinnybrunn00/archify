@@ -1,7 +1,7 @@
 class Hardware {
   final String cpuInfo = '/proc/cpuinfo';
   final String meminfo = '/proc/meminfo';
-  final String cpuinfoMaxFreq = '/sys/devices/system/cpu';
+  final String cpuSysteminfo = '/sys/devices/system/cpu';
 }
 
 /// Mapeamento de SoCs conhecidos por fabricante.

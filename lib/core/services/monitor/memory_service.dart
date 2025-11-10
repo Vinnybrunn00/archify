@@ -33,13 +33,13 @@ class MemoryService {
     }).asyncMap((future) => future);
   }
 
-  /// Reads and processes the memory information file (`/proc/meminfo`).
-  ///
-  /// Each line of the file is split into key-value pairs, converted from
-  /// kilobytes to gigabytes, and stored in a `Map`.
-  ///
-  /// Returns:
-  /// - A `Map<String, dynamic>` containing formatted memory data.
+  // Reads and processes the memory information file (`/proc/meminfo`).
+  //
+  // Each line of the file is split into key-value pairs, converted from
+  // kilobytes to gigabytes, and stored in a `Map`.
+  //
+  // Returns:
+  // - A `Map<String, dynamic>` containing formatted memory data.
   Future<Map<String, dynamic>> _getInforMemory() async {
     final File file = File(_hardware.meminfo);
     Map<String, dynamic> map = {};
@@ -54,17 +54,16 @@ class MemoryService {
     return map;
   }
 
-  /// Converts a memory value from kilobytes (kB) to gigabytes (GB).
-  ///
-  /// The conversion formula is:
-  /// `1 GB = 1024 × 1024 kB`
-  ///
-  /// Example:
-  /// ```
-  /// _convertKBToGB("2048000 kB"); // returns "1.95"
-  /// ```
-  ///
-  /// Returns a string formatted to two decimal places.
+  // Converts a memory value from kilobytes (kB) to gigabytes (GB).
+  //
+  // The conversion formula is:
+  // 1 GB = 1024 × 1024 kB
+  //
+  // Example:
+  // _convertKBToGB("2048000 kB"); // returns "1.95"
+  //
+  //
+  // Returns a string formatted to two decimal places.
   String _convertKBToGB(String kB) {
     final double factor = 1024 * 1024;
     String replace = kB.replaceAll('kB', '');
