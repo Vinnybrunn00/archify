@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:archify/core/services/monitor/cpu_services.dart';
+import 'package:archify/core/services/monitor_manager/cpu_services.dart';
 import 'package:flutter/services.dart';
 
 /// This class extends [CPUServices] to include both hardware-level

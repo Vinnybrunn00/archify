@@ -4,10 +4,12 @@ import 'package:archify/constants/constants_color.dart';
 import 'package:archify/constants/constants_regex.dart';
 import 'package:archify/core/models/file_types.dart';
 import 'package:archify/ui/page/main_page.dart';
+import 'package:archify/ui/view/app_image_view.dart';
 import 'package:archify/ui/view/app_pdf_view.dart';
 import 'package:archify/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:open_filex/open_filex.dart';
 
 class FilesDirectoryManager with ChangeNotifier {
   final FileSystemEntity _fileEntity;
@@ -43,9 +45,10 @@ class FilesDirectoryManager with ChangeNotifier {
     isAudio: audioExtRegex.hasMatch(path),
     isText: textExtRegex.hasMatch(path),
     isCode: codeExtRegex.hasMatch(path),
+    isWord: wordExtRegex.hasMatch(path),
   );
 
-  void openFilesAndFolder(BuildContext context) {
+  void openFilesAndFolder(BuildContext context, Size size) async {
     // open folder
     if (isDirectory) {
       _utils.goToRoutePageWithOutAnimation(
@@ -63,14 +66,62 @@ class FilesDirectoryManager with ChangeNotifier {
     if (_fileTypes.isPdf) {
       _utils.goToRoutePageWithOutAnimation(
         context,
-        route: PdfViewer(path: path),
+        route: PdfViewer(path: path, nameFile: nameFile),
       );
+    }
+
+    // open image file
+    if (_fileTypes.isImage) {
+      _utils.goToRoutePageWithOutAnimation(
+        context,
+        route: ImageView(path: path, nameFile: nameFile),
+      );
+    }
+    // open text file
+    if (_fileTypes.isText) {
+      await OpenFilex.open(path);
+    }
+
+    // open audio file
+    if (_fileTypes.isAudio) {
+      await OpenFilex.open(path);
+    }
+
+    // open video file
+    if (_fileTypes.isVideo) {
+      await OpenFilex.open(path);
+    }
+
+    // open code file
+    if (_fileTypes.isCode) {
+      await OpenFilex.open(path);
+    }
+
+    // open word file
+    if (_fileTypes.isWord) {
+      await OpenFilex.open(path);
     }
   }
 
   Widget? leading() {
     switch (_dicType) {
       case FileSystemEntityType.file:
+        if (_fileTypes.isWord) {
+          return Icon(
+            AntDesign.file_word_outline,
+            color: AppColor.pupleColor,
+            size: 22,
+          );
+        }
+
+        if (_fileTypes.isCode) {
+          return Icon(
+            LineAwesome.file_code,
+            color: AppColor.pupleColor,
+            size: 22,
+          );
+        }
+
         if (_fileTypes.isAudio) {
           return Icon(
             EvaIcons.music_outline,
@@ -89,16 +140,16 @@ class FilesDirectoryManager with ChangeNotifier {
 
         if (_fileTypes.isText) {
           return Icon(
-            EvaIcons.text_outline,
+            AntDesign.file_text_outline,
             color: AppColor.pupleColor,
             size: 22,
           );
         }
         if (_fileTypes.isPdf) {
           return Icon(
-            FontAwesome.file_pdf,
+            AntDesign.file_pdf_outline,
             color: AppColor.pupleColor,
-            size: 19,
+            size: 22,
           );
         }
       case FileSystemEntityType.directory:

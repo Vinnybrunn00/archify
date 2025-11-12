@@ -4,23 +4,25 @@ import 'package:archify/core/models/device.dart';
 import 'package:archify/core/models/memory.dart';
 import 'package:archify/core/models/network.dart';
 import 'package:archify/core/models/storage.dart';
-import 'package:archify/core/services/monitor/battery_service.dart';
-import 'package:archify/core/services/monitor/cpu_services.dart';
-import 'package:archify/core/services/monitor/info_device.dart';
-import 'package:archify/core/services/monitor/memory_service.dart';
-import 'package:archify/core/services/monitor/storage_service.dart';
-import 'package:archify/core/services/monitor/wifi_service.dart';
-import 'package:archify/ui/components/box_battery.dart';
-import 'package:archify/ui/components/box_info_android.dart';
-import 'package:archify/ui/components/box_memory.dart';
-import 'package:archify/ui/components/box_model_proc.dart';
-import 'package:archify/ui/components/box_process_frequence.dart';
-import 'package:archify/ui/components/box_storage.dart';
-import 'package:archify/ui/components/box_wifi_info.dart';
+import 'package:archify/core/services/monitor_manager/battery_service.dart';
+import 'package:archify/core/services/monitor_manager/cpu_services.dart';
+import 'package:archify/core/services/monitor_manager/info_device.dart';
+import 'package:archify/core/services/monitor_manager/memory_service.dart';
+import 'package:archify/core/services/monitor_manager/storage_service.dart';
+import 'package:archify/core/services/monitor_manager/wifi_service.dart';
+import 'package:archify/ui/components/statistics/box_battery.dart';
+import 'package:archify/ui/components/statistics/box_info_android.dart';
+import 'package:archify/ui/components/statistics/box_memory.dart';
+import 'package:archify/ui/components/statistics/box_model_proc.dart';
+import 'package:archify/ui/components/statistics/box_process_frequence.dart';
+import 'package:archify/ui/components/statistics/box_storage.dart';
+import 'package:archify/ui/components/statistics/box_wifi_info.dart';
+import 'package:archify/ui/page/statistics/info_android_page.dart';
+import 'package:archify/utils/utils.dart';
 import 'package:flutter/material.dart';
 
-class StatisticForNerds extends StatelessWidget {
-  StatisticForNerds({super.key});
+class StatisticAndroid extends StatelessWidget {
+  StatisticAndroid({super.key});
 
   final InfoDevice _infoDevice = InfoDevice();
   final StorageService _storageService = StorageService();
@@ -28,7 +30,6 @@ class StatisticForNerds extends StatelessWidget {
   final BatteryService _batteryService = BatteryService();
   final WifiService _wifiService = WifiService();
   final CPUServices _cpuServices = CPUServices();
-
   final List<double> _memoryList = [];
 
   @override
@@ -38,10 +39,10 @@ class StatisticForNerds extends StatelessWidget {
       appBar: AppBar(
         title: Text('Android Statistics'),
         titleTextStyle: TextStyle(color: AppColor.whiteColor, fontSize: 18),
-        backgroundColor: Color(0xff202124),
+        backgroundColor: AppColor.backgroundColorBlack,
         iconTheme: IconThemeData(color: AppColor.whiteColor),
       ),
-      backgroundColor: Color(0xff202124),
+      backgroundColor: AppColor.backgroundColorBlack,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -83,7 +84,13 @@ class StatisticForNerds extends StatelessWidget {
 
                       return BoxInfoAndroid(
                         onTap: () {
-                          log(device.socModel.toString());
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => InfoAndroidPage(
+                                listInfoDevice: device.toList(),
+                              ),
+                            ),
+                          );
                         },
                         androidVersion: device.androidVersion,
                         manufacturer: device.manufacturer,

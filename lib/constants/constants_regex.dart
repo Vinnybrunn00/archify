@@ -24,3 +24,9 @@ final codeExtRegex = RegExp(
   r'\.(dart|js|jsx|ts|tsx|java|kt|kts|swift|m|h|cpp|cxx|cc|c|cs|php|rb|py|go|rs|scala|sh|bat|pl|lua|r|sql|html|htm|css|scss|sass|json|xml|yaml|yml|ini|toml|md)$',
   caseSensitive: false,
 );
+
+final wordExtRegex = RegExp(
+  r'\.(doc|docx|dot|dotx|rtf)$',
+  caseSensitive: false,
+);
+

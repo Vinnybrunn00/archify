@@ -5,6 +5,7 @@ class FileTypes {
   bool isAudio = false;
   bool isText = false;
   bool isCode = false;
+  bool isWord = false;
 
   FileTypes({
     required this.isImage,
@@ -13,5 +14,6 @@ class FileTypes {
     required this.isAudio,
     required this.isText,
     required this.isCode,
+    required this.isWord
   });
 }

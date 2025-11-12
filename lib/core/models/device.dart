@@ -24,4 +24,15 @@ class Device {
     if (socModel == null || socModel.isEmpty) return "Desconhecido";
     return socModels[socModel] ?? socModel;
   }
+
+  List<Map<String, dynamic>> toList() {
+    return _dataDevice.entries
+        .map((element) => {'key': element.key, 'value': element.value})
+        .toList();
+  }
+
+  @override
+  String toString() {
+    return _dataDevice.toString();
+  }
 }

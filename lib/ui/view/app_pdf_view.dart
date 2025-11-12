@@ -1,11 +1,13 @@
+import 'package:archify/core/services/files_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:archify/constants/constants_color.dart';
 
 class PdfViewer extends StatefulWidget {
   final String path; // caminho do arquivo PDF
+  final String nameFile;
 
-  const PdfViewer({super.key, required this.path});
+  const PdfViewer({super.key, required this.path, required this.nameFile});
 
   @override
   State<PdfViewer> createState() => _PdfViewerState();
@@ -24,6 +26,16 @@ class _PdfViewerState extends State<PdfViewer> {
       appBar: AppBar(
         backgroundColor: AppColor.whiteColor,
         title: Text(widget.path.split('/').last),
+        actionsPadding: EdgeInsets.only(right: 20),
+        actions: [
+          InkWell(
+            onTap: () async {
+              final FilesServices filesServices = FilesServices();
+              await filesServices.onShareOnlyFile(widget.path, widget.nameFile);
+            },
+            child: Icon(Icons.share),
+          ),
+        ],
       ),
       body: Stack(
         children: [

@@ -13,7 +13,6 @@ class SelectCopyFile implements MessageErrorInterface {
   String? path;
 
   /// Creates an instance of [SelectCopyFile].
-  ///
   /// The [path] parameter defines the destination folder for the copied files.
   SelectCopyFile({required this.path});
 

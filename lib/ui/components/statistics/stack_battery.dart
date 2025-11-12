@@ -23,7 +23,7 @@ class StackBattery extends StatelessWidget {
           height: percent.toDouble(),
           width: size.width * .09,
           decoration: BoxDecoration(
-            color: charging == 'Carregando'
+            color: charging == 'Charging'
                 ? AppColor.greenColor.withAlpha(60)
                 : AppColor.blackBlue.withAlpha(120),
             borderRadius: BorderRadius.circular(8),
@@ -38,7 +38,7 @@ class StackBattery extends StatelessWidget {
                 percent.toString(),
                 style: TextStyle(color: Colors.white, fontSize: 12),
               ),
-              charging == 'Carregando'
+              charging == 'Charging'
                   ? Icon(EvaIcons.flash, color: AppColor.orangerColor, size: 13)
                   : Container(),
             ],

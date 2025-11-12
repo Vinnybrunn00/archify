@@ -43,6 +43,12 @@ class FilesServices {
   /// or cannot be accessed.
   List<FileSystemEntity> listFolders(String path) {
     final Directory dicFiles = Directory(path);
-    return dicFiles.listSync();
+    final List<FileSystemEntity> entities = dicFiles.listSync();
+    entities.sort((FileSystemEntity a, FileSystemEntity b) {
+      final aDate = a.statSync().modified;
+      final bDate = b.statSync().modified;
+      return bDate.compareTo(aDate);
+    });
+    return entities;
   }
 }

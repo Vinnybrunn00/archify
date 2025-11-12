@@ -8,7 +8,7 @@ class BoxOptionsArchive extends StatelessWidget {
   final void Function()? onShare;
   final void Function()? onDelete;
   final void Function(TapDownDetails)? onMore;
-  final void Function()? onMove;
+  final void Function()? openWith;
 
   const BoxOptionsArchive({
     super.key,
@@ -17,7 +17,7 @@ class BoxOptionsArchive extends StatelessWidget {
     this.onShare,
     this.onDelete,
     this.onMore,
-    this.onMove,
+    this.openWith,
   });
 
   @override
@@ -38,9 +38,10 @@ class BoxOptionsArchive extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             BtOptionsArchive(
-              onTap: onMove,
-              title: 'Move',
-              iconData: Bootstrap.folder_symlink,
+              isDirectory: isDirectory,
+              onTap: openWith,
+              title: 'Open With',
+              iconData: AntDesign.folder_open_outline,
             ),
 
             BtOptionsArchive(

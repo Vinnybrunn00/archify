@@ -1,6 +1,6 @@
 import 'package:archify/constants/constants_color.dart';
-import 'package:archify/ui/components/info_battery.dart';
-import 'package:archify/ui/components/stack_battery.dart';
+import 'package:archify/ui/components/statistics/info_battery.dart';
+import 'package:archify/ui/components/statistics/stack_battery.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 

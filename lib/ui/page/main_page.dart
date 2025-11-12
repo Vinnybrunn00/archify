@@ -9,13 +9,14 @@ import 'package:archify/core/services/files_services.dart';
 import 'package:archify/ui/components/box_options_archive.dart';
 import 'package:archify/ui/components/box_storage_msg_root.dart';
 import 'package:archify/ui/components/mini_bt_icon.dart';
-import 'package:archify/ui/page/statistic.dart';
+import 'package:archify/ui/page/statistics/statistic_android_page.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:archify/constants/constants_color.dart';
 import 'package:archify/ui/components/box_create_items.dart';
 import 'package:archify/ui/components/box_items.dart';
 import 'package:archify/utils/utils.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 
 class MainPage extends StatefulWidget {
@@ -132,15 +133,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   AnimationController? _controllerAnimation;
   Animation<Offset>? _animation;
 
-
-  
-
   @override
   void initState() {
     super.initState();
-
-
-    
 
     if (widget.listItems != null) {
       _update();
@@ -271,7 +266,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               onTap: () {
                 Navigator.of(
                   context,
-                ).push(MaterialPageRoute(builder: (_) => StatisticForNerds()));
+                ).push(MaterialPageRoute(builder: (_) => StatisticAndroid()));
               },
               icon: MingCute.bug_line,
             ),
@@ -388,7 +383,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                   ),
                                   onTap: _index == null
                                       ? () => directoryManager
-                                            .openFilesAndFolder(context)
+                                            .openFilesAndFolder(context, size)
                                       : null,
                                 );
                               },
@@ -405,7 +400,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                         ),
                       )
                     : Container(),
-
                 BoxOptionsArchive(
                   isDirectory: _isDirectory,
                   transform: Matrix4.translationValues(
@@ -413,14 +407,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     _index != null ? 0 : size.height,
                     0,
                   ),
-                  onMove: () {},
+                  openWith: () async => await OpenFilex.open(_path),
                   onShare: () async {
                     await _filesServices.onShareOnlyFile(
                       widget.path ?? _path,
                       _nameFile,
                     );
                   },
-
                   onDelete: () async => await _utils.showModal(
                     context,
                     size: size,
