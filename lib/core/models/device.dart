@@ -27,12 +27,18 @@ class Device {
 
   List<Map<String, dynamic>> toList() {
     return _dataDevice.entries
-        .map((element) => {'key': element.key, 'value': element.value})
+        .map(
+          (element) => {
+            'key': _formatkeys(element.key),
+            'value': element.value,
+          },
+        )
         .toList();
   }
 
-  @override
-  String toString() {
-    return _dataDevice.toString();
+  String _formatkeys(String key) {
+    String firstLatter = key[0].toUpperCase();
+    String nameFull = '$firstLatter${key.substring(1, key.length)}';
+    return nameFull.replaceAll('_', ' ');
   }
 }

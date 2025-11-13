@@ -70,15 +70,9 @@ class MainActivity : FlutterActivity() {
 
         val wifiInfo = wifiManager.connectionInfo
 
-        map["ssid"] = wifiInfo.ssid?.replace("\"", "")
-        map["bssid"] = wifiInfo.bssid
-        map["rssi"] = "${wifiInfo.rssi} dBm"
-        map["linkSpeed"] = "${wifiInfo.linkSpeed} Mbps"
-        map["macAddress"] = wifiInfo.macAddress
-        map["frequencyMHz"] = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) "${wifiInfo.frequency} MHz" else null
-
-        map["is5GHz"] = wifiInfo.frequency in 4900..5900
-        map["is24GHz"] = wifiInfo.frequency in 2400..2500
+        val network = connectivityManager.activeNetwork
+        val caps = connectivityManager.getNetworkCapabilities(network)
+        val isWifi = caps?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ?: false
 
         // Converts the IP (int) to string
         val ipInt = wifiInfo.ipAddress
@@ -92,14 +86,76 @@ class MainActivity : FlutterActivity() {
                 )
             ).hostAddress
         } else null
-        map["ipAddress"] = ip
 
-        val network = connectivityManager.activeNetwork
-        val caps = connectivityManager.getNetworkCapabilities(network)
-        val isWifi = caps?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ?: false
+        val ssid = wifiInfo.ssid?.replace("\"", "")
+
+        // 🔹 Segurança (usando scanResults, compatível Android 10+)
+        val scanResults = wifiManager.scanResults
+        var securityType = "Unknown"
+        if (!ssid.isNullOrBlank() && scanResults != null) {
+            val match = scanResults.firstOrNull { it.SSID == ssid }
+            if (match != null) {
+                val capsStr = match.capabilities.uppercase()
+                securityType = when {
+                    "WPA3" in capsStr -> "WPA3"
+                    "WPA2" in capsStr -> "WPA2"
+                    "WPA" in capsStr -> "WPA"
+                    "WEP" in capsStr -> "WEP"
+                    "EAP" in capsStr -> "EAP (Enterprise)"
+                    else -> "Open"
+                }
+            }
+        }
+
+        // 🔹 Canal Wi-Fi
+        val channel = when (wifiInfo.frequency) {
+            in 2412..2472 -> (wifiInfo.frequency - 2407) / 5
+            2484 -> 14
+            in 5170..5825 -> (wifiInfo.frequency - 5000) / 5
+            else -> null
+        }
+
         map["isWifiActive"] = isWifi
+        map["ssid"] = ssid
+        map["bssid"] = wifiInfo.bssid
+        map["ipAddress"] = ip
+        map["securityType"] = securityType
+        map["rssi"] = "${wifiInfo.rssi} dBm"
+        map["linkSpeed"] = "${wifiInfo.linkSpeed} Mbps"
+        map["frequencyMHz"] = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) "${wifiInfo.frequency} MHz" else null
+        map["channel"] = channel
+        map["is5GHz"] = wifiInfo.frequency in 4900..5900
+        map["is24GHz"] = wifiInfo.frequency in 2400..2500
+
+        val linkProps = connectivityManager.getLinkProperties(network)
+        val linkAddress = linkProps?.linkAddresses?.firstOrNull { it.address.hostAddress.contains(".") }
+        val prefixLength = linkAddress?.prefixLength ?: 0
+        
+        map["netmask"] = prefixLengthToNetmask(prefixLength)
+
+        // 🔹 Info DHCP (gateway, DNS, máscara, servidor DHCP)
+        val dhcp = wifiManager.dhcpInfo
+        if (dhcp != null) {
+            map["gateway"] = intToIp(dhcp.gateway)
+            map["dhcpServer"] = intToIp(dhcp.serverAddress)
+            map["dns1"] = intToIp(dhcp.dns1)
+            map["dns2"] = intToIp(dhcp.dns2)
+        }
+        map["prefixLength"] = prefixLength
 
         return map
+    }
+
+    private fun prefixLengthToNetmask(prefix: Int): String? {
+    if (prefix <= 0 || prefix > 32) return null
+    val mask = (0xffffffffL shl (32 - prefix)).toInt()
+    return "${mask shr 24 and 0xff}.${mask shr 16 and 0xff}.${mask shr 8 and 0xff}.${mask and 0xff}"
+}
+
+
+
+    private fun intToIp(ip: Int): String {
+        return "${ip and 0xff}.${ip shr 8 and 0xff}.${ip shr 16 and 0xff}.${ip shr 24 and 0xff}"
     }
 
     private fun getDeviceInfo(): Map<String, Any?> {

@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 import 'package:archify/constants/constants_color.dart';
 import 'package:archify/core/models/device.dart';
 import 'package:archify/core/models/memory.dart';
@@ -18,6 +18,7 @@ import 'package:archify/ui/components/statistics/box_process_frequence.dart';
 import 'package:archify/ui/components/statistics/box_storage.dart';
 import 'package:archify/ui/components/statistics/box_wifi_info.dart';
 import 'package:archify/ui/page/statistics/info_android_page.dart';
+import 'package:archify/ui/page/statistics/info_wifi_page.dart';
 import 'package:archify/utils/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -31,6 +32,8 @@ class StatisticAndroid extends StatelessWidget {
   final WifiService _wifiService = WifiService();
   final CPUServices _cpuServices = CPUServices();
   final List<double> _memoryList = [];
+
+  final Utils _utils = Utils();
 
   @override
   Widget build(BuildContext context) {
@@ -84,11 +87,10 @@ class StatisticAndroid extends StatelessWidget {
 
                       return BoxInfoAndroid(
                         onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => InfoAndroidPage(
-                                listInfoDevice: device.toList(),
-                              ),
+                          _utils.goToRoutePage(
+                            context,
+                            builder: (_) => InfoAndroidPage(
+                              listInfoDevice: device.toList(),
                             ),
                           );
                         },
@@ -183,8 +185,8 @@ class StatisticAndroid extends StatelessWidget {
 
               SizedBox(height: 10),
 
-              StreamBuilder(
-                stream: _wifiService.widfiInfoStream,
+              StreamBuilder<Map<String, dynamic>>(
+                stream: _wifiService.wifiInfoStream,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return Container();
                   Map<String, dynamic>? data = snapshot.data;
@@ -202,6 +204,12 @@ class StatisticAndroid extends StatelessWidget {
                           dbm: network.dbm,
                           speed: network.speed,
                           is5G: network.is5G,
+                          onTap: () => _utils.goToRoutePage(
+                            context,
+                            builder: (_) => InfoWifiPage(
+                              streamWifiInfo: _wifiService.wifiInfoStream,
+                            ),
+                          ),
                         )
                       : Container();
                 },

@@ -28,7 +28,7 @@ class WifiService {
   ///   print('Wi-Fi info: $data');
   /// });
   /// ```
-  Stream<Map<String, dynamic>> get widfiInfoStream {
+  Stream<Map<String, dynamic>> get wifiInfoStream {
     return Stream.periodic(Duration(seconds: 1), (_) async {
       return await _getWifiInfo();
     }).asyncMap((future) => future);

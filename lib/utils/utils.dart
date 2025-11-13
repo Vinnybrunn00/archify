@@ -158,6 +158,13 @@ class Utils {
     );
   }
 
+  void goToRoutePage(
+    BuildContext context, {
+    required Widget Function(BuildContext) builder,
+  }) {
+    Navigator.of(context).push(MaterialPageRoute(builder: builder));
+  }
+
   List<Widget> sliderAnimationPath(
     List<String>? list,
     Animation<Offset>? animation,

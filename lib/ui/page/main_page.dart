@@ -419,7 +419,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     size: size,
                     onDelete: () async {
                       final DeleteFileFolder deleteFileFolder =
-                          DeleteFileFolder(path: widget.path ?? _path);
+                          DeleteFileFolder(path: _path);
 
                       await deleteFileFolder.delete();
 

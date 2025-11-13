@@ -12,6 +12,7 @@ class BoxWifiInfo extends StatelessWidget {
   final String ipAddress;
   final String speed;
   final bool is5G;
+  final void Function()? onTap;
 
   const BoxWifiInfo({
     super.key,
@@ -22,6 +23,7 @@ class BoxWifiInfo extends StatelessWidget {
     required this.bssid,
     required this.frequencyMHz,
     required this.ipAddress,
+    this.onTap,
   });
 
   bool get setSSId => ssid.contains('unknown');
@@ -121,7 +123,7 @@ class BoxWifiInfo extends StatelessWidget {
                 ],
               ),
               InkWell(
-                onTap: () {},
+                onTap: onTap,
                 borderRadius: BorderRadius.circular(30 / 2),
                 child: Ink(
                   height: 30,

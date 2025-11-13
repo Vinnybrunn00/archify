@@ -1,4 +1,5 @@
 import 'package:archify/constants/constants_color.dart';
+import 'package:archify/ui/widgets/list_tile_custom.dart';
 import 'package:flutter/material.dart';
 
 class InfoAndroidPage extends StatelessWidget {
@@ -8,7 +9,6 @@ class InfoAndroidPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: AppColor.backgroundColorBlack,
       appBar: AppBar(
@@ -18,25 +18,17 @@ class InfoAndroidPage extends StatelessWidget {
         iconTheme: IconThemeData(color: AppColor.whiteColor),
       ),
       body: SafeArea(
-        child: Column(
-          children: listInfoDevice
-              .map(
-                (elements) => ListTile(
-                  title: Text(
-                    elements['key'],
-                    style: TextStyle(color: AppColor.whiteColor, fontSize: 15),
+        child: SingleChildScrollView(
+          child: Column(
+            children: listInfoDevice
+                .map(
+                  (elements) => ListTileCustom(
+                    title: elements['key'],
+                    trailing: elements['value'].toString(),
                   ),
-
-                  trailing: SizedBox(
-                    width: size.width * .3,
-                    child: Text(
-                      elements['value'].toString(),
-                      style: TextStyle(color: AppColor.whiteColor),
-                    ),
-                  ),
-                ),
-              )
-              .toList(),
+                )
+                .toList(),
+          ),
         ),
       ),
     );
