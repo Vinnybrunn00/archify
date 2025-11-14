@@ -1,4 +1,5 @@
 
+
 import 'package:archify/constants/constants_color.dart';
 import 'package:archify/core/models/device.dart';
 import 'package:archify/core/models/memory.dart';
@@ -8,16 +9,19 @@ import 'package:archify/core/services/monitor_manager/battery_service.dart';
 import 'package:archify/core/services/monitor_manager/cpu_services.dart';
 import 'package:archify/core/services/monitor_manager/info_device.dart';
 import 'package:archify/core/services/monitor_manager/memory_service.dart';
+import 'package:archify/core/services/monitor_manager/sims_service.dart';
 import 'package:archify/core/services/monitor_manager/storage_service.dart';
 import 'package:archify/core/services/monitor_manager/wifi_service.dart';
 import 'package:archify/ui/components/statistics/box_battery.dart';
 import 'package:archify/ui/components/statistics/box_info_android.dart';
+import 'package:archify/ui/components/statistics/box_sims.dart';
 import 'package:archify/ui/components/statistics/box_memory.dart';
 import 'package:archify/ui/components/statistics/box_model_proc.dart';
 import 'package:archify/ui/components/statistics/box_process_frequence.dart';
 import 'package:archify/ui/components/statistics/box_storage.dart';
 import 'package:archify/ui/components/statistics/box_wifi_info.dart';
 import 'package:archify/ui/page/statistics/info_android_page.dart';
+import 'package:archify/ui/page/statistics/info_sims_page.dart';
 import 'package:archify/ui/page/statistics/info_wifi_page.dart';
 import 'package:archify/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +35,8 @@ class StatisticAndroid extends StatelessWidget {
   final BatteryService _batteryService = BatteryService();
   final WifiService _wifiService = WifiService();
   final CPUServices _cpuServices = CPUServices();
+  final SimsService _simsService = SimsService();
+
   final List<double> _memoryList = [];
 
   final Utils _utils = Utils();
@@ -232,6 +238,25 @@ class StatisticAndroid extends StatelessWidget {
                     percent: storage.percent,
                     totalGB: storage.totalGB,
                     used: storage.usedGB,
+                  );
+                },
+              ),
+
+              FutureBuilder(
+                future: _simsService.getSimInfo(),
+                builder: (context, snapshot) {
+                  final Map<String, dynamic>? data = snapshot.data;
+
+                  if (data == null) return Container();
+
+                  final List<Object?> listSims = data['sims'];
+
+                  return BoxInfoSims(
+                    count: listSims.length,
+                    onTap: () => _utils.goToRoutePage(
+                      context,
+                      builder: (_) => InfoSimsPage(listSims: listSims),
+                    ),
                   );
                 },
               ),

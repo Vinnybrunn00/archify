@@ -18,11 +18,15 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import java.net.InetAddress
+import android.os.Bundle
+import android.telephony.SubscriptionManager
+import android.telephony.TelephonyManager
 
 class MainActivity : FlutterActivity() {
     private val EVENT_CHANNEL = "archify/battery_info"
     private val METHOD_CHANNEL = "archify/device_info"
     private val METHOD_CHANNEL_WIFI = "archify/wifi_info"
+    private val CHANNEL_SIM_INFO = "archify/sim_info"
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -59,6 +63,62 @@ class MainActivity : FlutterActivity() {
                 }
             }
         }
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger,CHANNEL_SIM_INFO).setMethodCallHandler { 
+            call, result ->
+            if (call.method == "getSimInfo") {
+                val simInfo = getSimInfo()
+                result.success(simInfo)
+            } else {
+                result.notImplemented()
+            }
+        }
+    }
+
+    private fun getSimInfo(): HashMap<String, Any?> {
+        val map = HashMap<String, Any?>()
+
+        val telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
+        val subscriptionManager = getSystemService(TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
+
+        val activeSimsInfo = mutableListOf<Map<String, Any?>>()
+
+        val infoList = try {
+            subscriptionManager.activeSubscriptionInfoList
+        } catch (e: SecurityException) {
+            null // Android pode bloquear em alguns aparelhos
+        }
+
+        infoList?.forEach { info ->
+
+            val simMap = HashMap<String, Any?>()
+
+            simMap["carrierName"] = info.carrierName?.toString()
+            simMap["displayName"] = info.displayName?.toString()
+            simMap["carrierId"] = info.carrierId
+
+            simMap["countryIso"] = info.countryIso
+            simMap["mcc"] = info.mcc
+            simMap["mnc"] = info.mnc
+
+            simMap["simSlotIndex"] = info.simSlotIndex
+
+            simMap["isEmbedded"] = info.isEmbedded // eSIM
+            simMap["cardId"] = info.cardId
+
+            simMap["dataRoaming"] = info.dataRoaming
+
+            simMap["phoneNumber"] = info.number
+
+            val simState = telephonyManager.getSimState(info.simSlotIndex)
+            simMap["simState"] = simState
+
+            activeSimsInfo.add(simMap)
+        }
+
+        map["sims"] = activeSimsInfo
+
+        return map
     }
 
     @Suppress("MissingPermission")
@@ -147,12 +207,10 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun prefixLengthToNetmask(prefix: Int): String? {
-    if (prefix <= 0 || prefix > 32) return null
-    val mask = (0xffffffffL shl (32 - prefix)).toInt()
-    return "${mask shr 24 and 0xff}.${mask shr 16 and 0xff}.${mask shr 8 and 0xff}.${mask and 0xff}"
-}
-
-
+        if (prefix <= 0 || prefix > 32) return null
+        val mask = (0xffffffffL shl (32 - prefix)).toInt()
+        return "${mask shr 24 and 0xff}.${mask shr 16 and 0xff}.${mask shr 8 and 0xff}.${mask and 0xff}"
+    }
 
     private fun intToIp(ip: Int): String {
         return "${ip and 0xff}.${ip shr 8 and 0xff}.${ip shr 16 and 0xff}.${ip shr 24 and 0xff}"

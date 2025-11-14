@@ -1,5 +1,3 @@
-
-
 import 'package:archify/constants/constants_color.dart';
 import 'package:archify/core/models/network.dart';
 import 'package:archify/ui/widgets/list_tile_custom.dart';
@@ -9,8 +7,6 @@ class InfoWifiPage extends StatelessWidget {
   final Stream<Map<String, dynamic>>? streamWifiInfo;
 
   const InfoWifiPage({super.key, required this.streamWifiInfo});
-
-  
 
   @override
   Widget build(BuildContext context) {
