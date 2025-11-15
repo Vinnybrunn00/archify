@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:archify/constants/constants_color.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -155,17 +157,17 @@ class BoxWifiInfo extends StatelessWidget {
 
     if (newValue <= 30 || newValue <= 41) {
       return Icon(BoxIcons.bx_wifi, color: Colors.white, size: 35);
-    } else if (newValue >= 40 || newValue <= 50) {
+    } else if (newValue <= 40 || newValue <= 50) {
       return Icon(BoxIcons.bx_wifi, color: Colors.white, size: 35);
-    } else if (newValue >= 51 || newValue <= 60) {
+    } else if (newValue <= 51 || newValue <= 60) {
       return Icon(BoxIcons.bx_wifi_2, color: Colors.white, size: 35);
-    } else if (newValue >= 61 || newValue <= 67) {
+    } else if (newValue <= 61 || newValue <= 67) {
       return Icon(BoxIcons.bx_wifi_2, color: Colors.white, size: 35);
-    } else if (newValue >= 68 || newValue <= 70) {
+    } else if (newValue <= 68 || newValue <= 70) {
       return Icon(BoxIcons.bx_wifi_1, color: Colors.white, size: 35);
-    } else if (newValue >= 71 || newValue <= 80) {
+    } else if (newValue <= 71 || newValue <= 80) {
       return Icon(BoxIcons.bx_wifi_1, color: Colors.white, size: 35);
-    } else if (newValue >= 80) {
+    } else if (newValue <= 80) {
       return Icon(BoxIcons.bx_wifi_off, color: Colors.white, size: 35);
     } else {
       return Icon(BoxIcons.bx_wifi_off, color: Colors.white, size: 35);

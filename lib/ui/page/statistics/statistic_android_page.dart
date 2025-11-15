@@ -1,5 +1,3 @@
-
-
 import 'package:archify/constants/constants_color.dart';
 import 'package:archify/core/models/device.dart';
 import 'package:archify/core/models/memory.dart';

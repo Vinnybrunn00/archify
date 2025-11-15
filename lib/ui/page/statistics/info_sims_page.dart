@@ -1,4 +1,3 @@
-
 import 'package:archify/constants/constants_color.dart';
 import 'package:archify/core/models/sims.dart';
 import 'package:archify/ui/widgets/box_info_sims.dart';
