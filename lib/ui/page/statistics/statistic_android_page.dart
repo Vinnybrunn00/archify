@@ -1,12 +1,16 @@
+import 'dart:developer';
+
 import 'package:archify/constants/constants_color.dart';
 import 'package:archify/core/models/device.dart';
 import 'package:archify/core/models/memory.dart';
 import 'package:archify/core/models/network.dart';
+import 'package:archify/core/models/sensors.dart';
 import 'package:archify/core/models/storage.dart';
 import 'package:archify/core/services/monitor_manager/battery_service.dart';
 import 'package:archify/core/services/monitor_manager/cpu_services.dart';
 import 'package:archify/core/services/monitor_manager/info_device.dart';
 import 'package:archify/core/services/monitor_manager/memory_service.dart';
+import 'package:archify/core/services/monitor_manager/sensors_service.dart';
 import 'package:archify/core/services/monitor_manager/sims_service.dart';
 import 'package:archify/core/services/monitor_manager/storage_service.dart';
 import 'package:archify/core/services/monitor_manager/wifi_service.dart';
@@ -21,6 +25,7 @@ import 'package:archify/ui/components/statistics/box_wifi_info.dart';
 import 'package:archify/ui/page/statistics/info_android_page.dart';
 import 'package:archify/ui/page/statistics/info_sims_page.dart';
 import 'package:archify/ui/page/statistics/info_wifi_page.dart';
+import 'package:archify/ui/widgets/event_button.dart';
 import 'package:archify/utils/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -34,6 +39,7 @@ class StatisticAndroid extends StatelessWidget {
   final WifiService _wifiService = WifiService();
   final CPUServices _cpuServices = CPUServices();
   final SimsService _simsService = SimsService();
+  final SensorsService _sensorsService = SensorsService();
 
   final List<double> _memoryList = [];
 
@@ -201,6 +207,7 @@ class StatisticAndroid extends StatelessWidget {
 
                   return network.isWifiActive
                       ? BoxWifiInfo(
+                          iconPowerDbm: network.iconPowerDbm,
                           ssid: network.ssid,
                           bssid: network.bssid,
                           frequencyMHz: network.frequencyMHz,
@@ -240,23 +247,94 @@ class StatisticAndroid extends StatelessWidget {
                 },
               ),
 
-              FutureBuilder(
-                future: _simsService.getSimInfo(),
-                builder: (context, snapshot) {
-                  final Map<String, dynamic>? data = snapshot.data;
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  FutureBuilder(
+                    future: _simsService.getSimInfo(),
+                    builder: (context, snapshot) {
+                      final Map<String, dynamic>? data = snapshot.data;
 
-                  if (data == null) return Container();
+                      if (data == null) return Container();
 
-                  final List<Object?> listSims = data['sims'];
+                      final List<Object?> listSims = data['sims'];
 
-                  return BoxInfoSims(
-                    count: listSims.length,
-                    onTap: () => _utils.goToRoutePage(
-                      context,
-                      builder: (_) => InfoSimsPage(listSims: listSims),
-                    ),
-                  );
-                },
+                      return BoxInfoSims(
+                        count: listSims.length,
+                        onTap: () => _utils.goToRoutePage(
+                          context,
+                          builder: (_) => InfoSimsPage(listSims: listSims),
+                        ),
+                      );
+                    },
+                  ),
+                  FutureBuilder(
+                    future: _sensorsService.getAllSensors(),
+                    builder: (context, snapshot) {
+                      List<Map<String, dynamic>>? dataSensors = snapshot.data;
+
+                      log(dataSensors.toString());
+
+                      if (dataSensors == null) return Text('Error');
+
+                      final Sensors sensors = Sensors(
+                        listMapSensors: dataSensors,
+                      );
+
+                      return AnimatedContainer(
+                        duration: Duration(milliseconds: 550),
+                        margin: EdgeInsets.only(right: 8),
+                        padding: EdgeInsets.only(left: 8, right: 8),
+                        height: size.height * .08,
+                        width: size.width * .42,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColor.greenColor),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.sensors,
+                                      color: AppColor.whiteColor,
+                                      size: 35,
+                                    ),
+                                    SizedBox(width: 8),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '${sensors.sensorsLength}',
+                                          style: TextStyle(
+                                            color: AppColor.whiteColor,
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Sensors',
+                                          style: TextStyle(
+                                            color: AppColor.whiteColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                EventButton(onTap: () {}),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),

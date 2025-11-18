@@ -1,4 +1,5 @@
 import 'package:archify/constants/constants_color.dart';
+import 'package:archify/ui/widgets/event_button.dart';
 import 'package:flutter/material.dart';
 
 class BoxInfoSims extends StatelessWidget {
@@ -12,7 +13,8 @@ class BoxInfoSims extends StatelessWidget {
     final Size size = MediaQuery.of(context).size;
     return AnimatedContainer(
       duration: Duration(milliseconds: 650),
-      margin: EdgeInsets.only(left: 8, top: 10),
+      margin: EdgeInsets.only(left: 8),
+      padding: EdgeInsets.only(left: 8, right: 8),
       height: size.height * .08,
       width: size.width * .42,
       decoration: BoxDecoration(
@@ -20,38 +22,29 @@ class BoxInfoSims extends StatelessWidget {
         border: Border.all(color: AppColor.greenColor),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Icon(Icons.sim_card, color: AppColor.whiteColor, size: 35),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Row(
             children: [
-              Text(
-                '$count',
-                style: TextStyle(color: AppColor.whiteColor, fontSize: 14),
-              ),
-              Text(
-                'Info Sims',
-                style: TextStyle(color: AppColor.whiteColor, fontSize: 14),
+              Icon(Icons.sim_card, color: AppColor.whiteColor, size: 35),
+              SizedBox(width: 8),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '$count',
+                    style: TextStyle(color: AppColor.whiteColor, fontSize: 14),
+                  ),
+                  Text(
+                    'Sims',
+                    style: TextStyle(color: AppColor.whiteColor, fontSize: 14),
+                  ),
+                ],
               ),
             ],
           ),
-          InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(30 / 2),
-            child: Ink(
-              height: 30,
-              width: 30,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30 / 2),
-              ),
-              child: Icon(
-                Icons.keyboard_arrow_right_outlined,
-                color: AppColor.whiteColor,
-              ),
-            ),
-          ),
+          EventButton(onTap: onTap),
         ],
       ),
     );

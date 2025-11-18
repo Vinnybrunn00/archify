@@ -19,7 +19,7 @@ class BoxStorage extends StatelessWidget {
     final Size size = MediaQuery.of(context).size;
     return AnimatedContainer(
       padding: EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 8),
-      margin: EdgeInsets.only(left: 8, right: 8),
+      margin: EdgeInsets.only(left: 8, right: 8, bottom: 8),
       width: size.width,
       duration: Duration(milliseconds: 550),
       decoration: BoxDecoration(

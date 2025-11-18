@@ -21,12 +21,17 @@ import java.net.InetAddress
 import android.os.Bundle
 import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
+import android.hardware.Sensor
+import android.hardware.SensorManager
+
+import android.util.Log
 
 class MainActivity : FlutterActivity() {
     private val EVENT_CHANNEL = "archify/battery_info"
     private val METHOD_CHANNEL = "archify/device_info"
     private val METHOD_CHANNEL_WIFI = "archify/wifi_info"
     private val CHANNEL_SIM_INFO = "archify/sim_info"
+    private val CHANNEL_SENSORS = "archify/sensors"
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -64,7 +69,7 @@ class MainActivity : FlutterActivity() {
             }
         }
 
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger,CHANNEL_SIM_INFO).setMethodCallHandler { 
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL_SIM_INFO).setMethodCallHandler { 
             call, result ->
             if (call.method == "getSimInfo") {
                 val simInfo = getSimInfo()
@@ -73,6 +78,47 @@ class MainActivity : FlutterActivity() {
                 result.notImplemented()
             }
         }
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL_SENSORS).setMethodCallHandler { 
+            call, result ->
+            if (call.method == "getAllSensors") {
+                result.success(getAllSensors())
+            } else {
+                result.notImplemented()
+            }
+        }
+    }
+
+
+    private fun getAllSensors(): List<Map<String, Any?>> {
+        val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        val sensorList = sensorManager.getSensorList(Sensor.TYPE_ALL)
+
+        val sensors = ArrayList<Map<String, Any?>>()
+
+        Log.d("DEBUG_SENSORS", "Total sensores: ${sensorList.size}")
+
+        sensorList.forEach { s ->
+            val map = HashMap<String, Any?>()
+
+            map["name"] = s.name
+            map["vendor"] = s.vendor
+            map["version"] = s.version
+            map["type"] = s.type
+            map["power_mA"] = s.power
+            map["resolution"] = s.resolution
+            map["maximum_range"] = s.maximumRange
+            map["min_delay_us"] = s.minDelay
+            map["max_delay_us"] = s.maxDelay
+            map["fifo_reserved_event_count"] = s.fifoReservedEventCount
+            map["fifo_max_event_count"] = s.fifoMaxEventCount
+            map["is_dynamic_sensor"] = s.isDynamicSensor
+            map["string_type"] = s.stringType
+
+            sensors.add(map)
+        }
+
+        return sensors
     }
 
     private fun getSimInfo(): HashMap<String, Any?> {
