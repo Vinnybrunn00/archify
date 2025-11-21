@@ -1,6 +1,5 @@
 import 'package:archify/constants/constants_value.dart';
 import 'package:archify/core/models/format_manager.dart';
-
 import 'package:flutter/material.dart';
 import 'package:archify/constants/constants_color.dart';
 
