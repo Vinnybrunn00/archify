@@ -1,5 +1,6 @@
 import 'package:archify/constants/constants_value.dart';
-import 'package:archify/utils/utils.dart';
+import 'package:archify/core/models/format_manager.dart';
+
 import 'package:flutter/material.dart';
 import 'package:archify/constants/constants_color.dart';
 
@@ -23,8 +24,7 @@ class BoxItems extends StatelessWidget {
     this.onLongPress,
     required this.isSelected,
   });
-
-  final Utils _utils = Utils();
+  final FormatManager _formatManager = FormatManager();
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +102,7 @@ class BoxItems extends StatelessWidget {
                           Row(
                             children: [
                               Text(
-                                _utils.setFormatHour(fileChanged),
+                                _formatManager.setFormatHour(fileChanged),
                                 style: TextStyle(
                                   color: isDarkMode.value
                                       ? AppColor.whiteColor.withAlpha(100)
@@ -120,7 +120,7 @@ class BoxItems extends StatelessWidget {
                               ),
                               SizedBox(width: 10),
                               Text(
-                                _utils.formatBytes(sizeFile),
+                                _formatManager.formatBytes(sizeFile),
                                 style: TextStyle(
                                   color: isDarkMode.value
                                       ? AppColor.whiteColor.withAlpha(100)
