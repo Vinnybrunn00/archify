@@ -18,10 +18,6 @@ class CreateFolderManager implements MessageErrorInterface {
   /// The [newFolder] parameter specifies the folder name to be created.
   CreateFolderManager({required this.path, required this.newFolder});
 
-  /// The error message property from [MessageErrorInterface].
-  ///
-  /// It will never be implemented because error handling is delegated.
-  /// to [showFileSystemException].
   @override
   String? get errorMessage => _errorMessage;
 

@@ -2,8 +2,6 @@ import 'dart:io';
 import 'package:archify/core/contracts/message_error_interface.dart';
 
 /// This class handles both file and directory deletion operations.
-/// It implements [MessageErrorInterface] to provide user-friendly
-/// error messages in case of a [FileSystemException].
 class DeleteFileFolder implements MessageErrorInterface {
   /// The full path of the file or folder to be deleted.
   String path;

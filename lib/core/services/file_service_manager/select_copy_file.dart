@@ -4,12 +4,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// This class allows users to select multiple files using the native file picker
-/// and copy them to a target folder. If no custom [path] is provided, it defaults
-/// to the user's downloads directory.
+/// and copy them to a target folder.
 class SelectCopyFile implements MessageErrorInterface {
   /// The destination path where the selected files will be copied.
-  ///
-  /// If `null`, the user's downloads directory is used as the target location.
   String? path;
 
   /// Creates an instance of [SelectCopyFile].
@@ -28,13 +25,8 @@ class SelectCopyFile implements MessageErrorInterface {
   @override
   String showFileSystemException(String message) => throw UnimplementedError();
 
-  /// Opens a file picker to select one or more files, then copies them
-  /// to the specified directory.
-  ///
-  /// - If [path] is `null`, the system's downloads directory is used.
-  /// - Files are copied with their original names preserved.
-  ///
-  /// In case of failure, an error message is stored in [_errorMessage].
+  // Opens a file picker to select one or more files, then copies them
+  // to the specified directory.
   Future<void> onSelectAndCopy() async {
     final Directory? directory = await getDownloadsDirectory();
     if (directory == null) return;
