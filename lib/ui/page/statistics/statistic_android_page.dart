@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:archify/constants/constants_color.dart';
 import 'package:archify/core/models/device.dart';
 import 'package:archify/core/models/memory.dart';
@@ -11,11 +9,11 @@ import 'package:archify/core/services/monitor_manager/cpu_services.dart';
 import 'package:archify/core/services/monitor_manager/info_device.dart';
 import 'package:archify/core/services/monitor_manager/memory_service.dart';
 import 'package:archify/core/services/monitor_manager/sensors_service.dart';
-import 'package:archify/core/services/monitor_manager/sims_service.dart';
 import 'package:archify/core/services/monitor_manager/storage_service.dart';
 import 'package:archify/core/services/monitor_manager/wifi_service.dart';
 import 'package:archify/ui/components/statistics/box_battery.dart';
 import 'package:archify/ui/components/statistics/box_info_android.dart';
+import 'package:archify/ui/components/statistics/box_sensors.dart';
 import 'package:archify/ui/components/statistics/box_sims.dart';
 import 'package:archify/ui/components/statistics/box_memory.dart';
 import 'package:archify/ui/components/statistics/box_model_proc.dart';
@@ -23,9 +21,9 @@ import 'package:archify/ui/components/statistics/box_process_frequence.dart';
 import 'package:archify/ui/components/statistics/box_storage.dart';
 import 'package:archify/ui/components/statistics/box_wifi_info.dart';
 import 'package:archify/ui/page/statistics/info_android_page.dart';
+import 'package:archify/ui/page/statistics/info_sensors_page.dart';
 import 'package:archify/ui/page/statistics/info_sims_page.dart';
 import 'package:archify/ui/page/statistics/info_wifi_page.dart';
-import 'package:archify/ui/widgets/event_button.dart';
 import 'package:archify/utils/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -38,7 +36,6 @@ class StatisticAndroid extends StatelessWidget {
   final BatteryService _batteryService = BatteryService();
   final WifiService _wifiService = WifiService();
   final CPUServices _cpuServices = CPUServices();
-  final SimsService _simsService = SimsService();
   final SensorsService _sensorsService = SensorsService();
 
   final List<double> _memoryList = [];
@@ -250,30 +247,17 @@ class StatisticAndroid extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  FutureBuilder(
-                    future: _simsService.getSimInfo(),
-                    builder: (context, snapshot) {
-                      final Map<String, dynamic>? data = snapshot.data;
-
-                      if (data == null) return Container();
-
-                      final List<Object?> listSims = data['sims'];
-
-                      return BoxInfoSims(
-                        count: listSims.length,
-                        onTap: () => _utils.goToRoutePage(
-                          context,
-                          builder: (_) => InfoSimsPage(listSims: listSims),
-                        ),
-                      );
-                    },
+                  BoxInfoSims(
+                    onTap: () => _utils.goToRoutePage(
+                      context,
+                      builder: (_) => InfoSimsPage(),
+                    ),
                   ),
+
                   FutureBuilder(
                     future: _sensorsService.getAllSensors(),
                     builder: (context, snapshot) {
                       List<Map<String, dynamic>>? dataSensors = snapshot.data;
-
-                      log(dataSensors.toString());
 
                       if (dataSensors == null) return Text('Error');
 
@@ -281,55 +265,13 @@ class StatisticAndroid extends StatelessWidget {
                         listMapSensors: dataSensors,
                       );
 
-                      return AnimatedContainer(
-                        duration: Duration(milliseconds: 550),
-                        margin: EdgeInsets.only(right: 8),
-                        padding: EdgeInsets.only(left: 8, right: 8),
-                        height: size.height * .08,
-                        width: size.width * .42,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColor.greenColor),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.sensors,
-                                      color: AppColor.whiteColor,
-                                      size: 35,
-                                    ),
-                                    SizedBox(width: 8),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '${sensors.sensorsLength}',
-                                          style: TextStyle(
-                                            color: AppColor.whiteColor,
-                                            fontSize: 15,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Sensors',
-                                          style: TextStyle(
-                                            color: AppColor.whiteColor,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                EventButton(onTap: () {}),
-                              ],
-                            ),
-                          ],
+                      return BoxSensors(
+                        count: sensors.sensorsLength,
+                        onTap: () => _utils.goToRoutePage(
+                          context,
+                          builder: (_) => InfoSensorsPage(
+                            dataSensors: sensors.listMapSensors,
+                          ),
                         ),
                       );
                     },

@@ -3,10 +3,9 @@ import 'package:archify/ui/widgets/event_button.dart';
 import 'package:flutter/material.dart';
 
 class BoxInfoSims extends StatelessWidget {
-  final int count;
   final void Function()? onTap;
 
-  const BoxInfoSims({super.key, this.onTap, required this.count});
+  const BoxInfoSims({super.key, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +14,7 @@ class BoxInfoSims extends StatelessWidget {
       duration: Duration(milliseconds: 650),
       margin: EdgeInsets.only(left: 8),
       padding: EdgeInsets.only(left: 8, right: 8),
-      height: size.height * .08,
+      height: size.height * .082,
       width: size.width * .42,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
@@ -28,19 +27,9 @@ class BoxInfoSims extends StatelessWidget {
             children: [
               Icon(Icons.sim_card, color: AppColor.whiteColor, size: 35),
               SizedBox(width: 8),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '$count',
-                    style: TextStyle(color: AppColor.whiteColor, fontSize: 14),
-                  ),
-                  Text(
-                    'Sims',
-                    style: TextStyle(color: AppColor.whiteColor, fontSize: 14),
-                  ),
-                ],
+              Text(
+                'Info Sims',
+                style: TextStyle(color: AppColor.whiteColor, fontSize: 14),
               ),
             ],
           ),

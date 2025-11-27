@@ -69,6 +69,15 @@ class MainActivity : FlutterActivity() {
             }
         }
 
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL_SENSORS).setMethodCallHandler { 
+            call, result ->
+            if (call.method == "getAllSensors") {
+                result.success(getAllSensors())
+            } else {
+                result.notImplemented()
+            }
+        }
+        
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL_SIM_INFO).setMethodCallHandler { 
             call, result ->
             if (call.method == "getSimInfo") {
@@ -78,17 +87,50 @@ class MainActivity : FlutterActivity() {
                 result.notImplemented()
             }
         }
-
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL_SENSORS).setMethodCallHandler { 
-            call, result ->
-            if (call.method == "getAllSensors") {
-                result.success(getAllSensors())
-            } else {
-                result.notImplemented()
-            }
-        }
     }
 
+    private fun getSimInfo(): HashMap<String, Any?> {
+        val map = HashMap<String, Any?>()
+
+        val telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
+        val subscriptionManager = getSystemService(TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
+
+        val activeSimsInfo = mutableListOf<Map<String, Any?>>()
+
+        val infoList = try {
+            subscriptionManager.activeSubscriptionInfoList
+        } catch (e: SecurityException) {
+            null 
+        }
+
+        infoList?.forEach { info ->
+
+            val simMap = HashMap<String, Any?>()
+
+            simMap["operator"] = info.carrierName?.toString()
+            simMap["name"] = info.displayName?.toString()
+            simMap["carrierId"] = info.carrierId
+
+            simMap["country"] = info.countryIso
+            simMap["MCC"] = info.mcc
+            simMap["MNC"] = info.mnc
+
+            simMap["slot"] = info.simSlotIndex
+
+            simMap["roaming"] = if(info.dataRoaming > 0) "Yes" else "No"
+
+            simMap["number"] = info.number
+
+            val simState = telephonyManager.getSimState(info.simSlotIndex)
+            simMap["simState"] = simState
+
+            activeSimsInfo.add(simMap)
+        }
+
+        map["sims"] = activeSimsInfo
+
+        return map
+    }
 
     private fun getAllSensors(): List<Map<String, Any?>> {
         val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -121,51 +163,6 @@ class MainActivity : FlutterActivity() {
         return sensors
     }
 
-    private fun getSimInfo(): HashMap<String, Any?> {
-        val map = HashMap<String, Any?>()
-
-        val telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
-        val subscriptionManager = getSystemService(TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
-
-        val activeSimsInfo = mutableListOf<Map<String, Any?>>()
-
-        val infoList = try {
-            subscriptionManager.activeSubscriptionInfoList
-        } catch (e: SecurityException) {
-            null // Android pode bloquear em alguns aparelhos
-        }
-
-        infoList?.forEach { info ->
-
-            val simMap = HashMap<String, Any?>()
-
-            simMap["carrierName"] = info.carrierName?.toString()
-            simMap["displayName"] = info.displayName?.toString()
-            simMap["carrierId"] = info.carrierId
-
-            simMap["countryIso"] = info.countryIso
-            simMap["mcc"] = info.mcc
-            simMap["mnc"] = info.mnc
-
-            simMap["simSlotIndex"] = info.simSlotIndex
-
-            simMap["isEmbedded"] = info.isEmbedded // eSIM
-            simMap["cardId"] = info.cardId
-
-            simMap["dataRoaming"] = info.dataRoaming
-
-            simMap["phoneNumber"] = info.number
-
-            val simState = telephonyManager.getSimState(info.simSlotIndex)
-            simMap["simState"] = simState
-
-            activeSimsInfo.add(simMap)
-        }
-
-        map["sims"] = activeSimsInfo
-
-        return map
-    }
 
     @Suppress("MissingPermission")
     private fun getWifiInfo(context: Context): Map<String, Any?> {

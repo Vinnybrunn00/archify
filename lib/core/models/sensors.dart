@@ -5,4 +5,6 @@ class Sensors {
     : _listMapSensors = listMapSensors;
 
   int get sensorsLength => _listMapSensors.length;
+
+  List<Map<String, dynamic>> get listMapSensors => [..._listMapSensors];
 }
