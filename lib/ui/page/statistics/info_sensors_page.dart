@@ -61,9 +61,12 @@ class InfoSensorsPage extends StatelessWidget {
                               '${capitalizer(maps.key)}: ',
                               style: AppStyle.s13ftAlpha180Weight600,
                             ),
-                            Text(
-                              maps.value.toString(),
-                              style: AppStyle.s13ftAlpha180,
+                            Expanded(
+                              child: Text(
+                                maps.value.toString(),
+                                style: AppStyle.s13ftAlpha180,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ],
                         ),

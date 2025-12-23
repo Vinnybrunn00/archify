@@ -45,7 +45,7 @@ class MemoryService {
     Map<String, dynamic> map = {};
 
     final List<String> read = await file.readAsLines();
-
+                                                                                              
     for (String item in read) {
       List<String> split = item.split(':');
 

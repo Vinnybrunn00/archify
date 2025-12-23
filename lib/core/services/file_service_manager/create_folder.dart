@@ -29,15 +29,15 @@ class CreateFolderManager implements MessageErrorInterface {
   String showFileSystemException(String message) {
     switch (message) {
       case 'Not a directory':
-        return 'Isso não é um diretório';
+        return 'This is not a directory.';
       case 'Permission denied':
-        return 'Você não tem permissão para executar esta ação';
+        return 'You do not have permission to perform this action.';
       case 'Device or resource busy':
-        return 'Dispositivo ou recurso ocupado';
+        return 'Busy device or resource';
       case 'No space left on device':
-        return 'Não há espaço disponível no dispositivo';
+        return 'There is no space available on the device.';
       default:
-        return 'Invalid argument';
+        return 'Unknown error';
     }
   }
 
@@ -51,7 +51,7 @@ class CreateFolderManager implements MessageErrorInterface {
     final Directory? directory = await getDownloadsDirectory();
 
     if (directory == null) {
-      _errorMessage = 'Diretório não existe!';
+      _errorMessage = 'Directory doesn"t exist';
       return;
     }
 
@@ -63,9 +63,10 @@ class CreateFolderManager implements MessageErrorInterface {
       Directory dicFiles = Directory('$joinPath/$newFolder');
 
       if (await dicFiles.exists()) {
-        _errorMessage = 'Uma pasta com este nome ja existe, tente outro.';
+        _errorMessage = 'A folder with this name already exists.';
         return;
       }
+
       await dicFiles.create();
       _errorMessage = null;
     } on FileSystemException catch (err) {

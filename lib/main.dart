@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:archify/ui/page/main_page.dart';
 
-void main()   {
+void main() {
   runApp(const ArchifyApp());
 }
 
@@ -20,4 +20,3 @@ class ArchifyApp extends StatelessWidget {
     );
   }
 }
-  

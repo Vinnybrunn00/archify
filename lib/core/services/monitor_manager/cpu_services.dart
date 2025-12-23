@@ -35,7 +35,7 @@ class CPUServices {
   // Returns a list of doubles representing the frequency (in MHz) for each core.
   // If a frequency file does not exist or cannot be parsed, it is skipped.
   Future<List<double>> _getFrequenceCpuInfo() async {
-    List<double> listFrequence = [];
+    final List<double> listFrequence = [];
 
     final Map<String, dynamic> getInfo = await getCpuInfo();
 
