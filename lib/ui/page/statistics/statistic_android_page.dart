@@ -56,6 +56,7 @@ class StatisticAndroid extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
+            spacing: 10,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
@@ -108,7 +109,6 @@ class StatisticAndroid extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 10),
 
               // Stream Memory
               StreamBuilder(
@@ -139,8 +139,7 @@ class StatisticAndroid extends StatelessWidget {
                 },
               ),
 
-              SizedBox(height: 10),
-
+              // device info
               FutureBuilder(
                 future: _infoDevice.getDeviceInfo(),
                 builder: (context, snapshot) {
@@ -158,8 +157,7 @@ class StatisticAndroid extends StatelessWidget {
                 },
               ),
 
-              SizedBox(height: 10),
-
+              // stream cpu info
               StreamBuilder(
                 stream: _cpuServices.frequenceCpuStream,
                 builder: (context, snapshot) {
@@ -190,8 +188,7 @@ class StatisticAndroid extends StatelessWidget {
                 },
               ),
 
-              SizedBox(height: 10),
-
+              // stream wifi info
               StreamBuilder<Map<String, dynamic>>(
                 stream: _wifiService.wifiInfoStream,
                 builder: (context, snapshot) {
@@ -223,8 +220,7 @@ class StatisticAndroid extends StatelessWidget {
                 },
               ),
 
-              SizedBox(height: 10),
-
+              // stream storage info
               StreamBuilder(
                 stream: _storageService.getStreamStorage,
                 builder: (context, snapshot) {
@@ -254,6 +250,7 @@ class StatisticAndroid extends StatelessWidget {
                     ),
                   ),
 
+                  // _sensors info
                   FutureBuilder(
                     future: _sensorsService.getAllSensors(),
                     builder: (context, snapshot) {
