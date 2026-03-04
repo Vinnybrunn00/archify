@@ -24,7 +24,7 @@ class _InfoSimsPageState extends State<InfoSimsPage> {
   }
 
   void _reload() async {
-    PermissionStatus status = await Permission.phone.request();
+    final PermissionStatus status = await Permission.phone.request();
     if (status.isGranted) {
       setState(() {
         _getSimInfo = _simsService.getSimInfo();

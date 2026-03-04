@@ -295,7 +295,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                       ? AppColor.whiteColor
                                       : AppColor.blackColor,
                                 ),
-
                           Expanded(
                             child: SingleChildScrollView(
                               controller: _scrollController,

@@ -7,7 +7,7 @@ class Hardware {
 /// Mapeamento de SoCs conhecidos por fabricante.
 /// As chaves são os códigos técnicos (ex: "SM8450"),
 /// e os valores são os nomes comerciais.
-const Map<String, String> socModels = {
+final Map<String, String> socModels = {
   // 🏁 Qualcomm Snapdragon
   "SM8650": "Snapdragon 8 Gen 3",
   "SM8550": "Snapdragon 8 Gen 2",

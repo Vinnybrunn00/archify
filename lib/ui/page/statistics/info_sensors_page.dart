@@ -41,6 +41,7 @@ class InfoSensorsPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
+              spacing: 8,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -51,7 +52,6 @@ class InfoSensorsPage extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(height: 8),
                 Column(
                   children: sensor.entries
                       .map<Row>(

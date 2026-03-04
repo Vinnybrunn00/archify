@@ -28,7 +28,7 @@ class InfoWifiPage extends StatelessWidget {
           }
 
           if (!snapshot.hasData) return Container();
-          Map<String, dynamic>? data = snapshot.data;
+          final Map<String, dynamic>? data = snapshot.data;
 
           if (data == null) return Container();
 

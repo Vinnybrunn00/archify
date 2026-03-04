@@ -68,7 +68,7 @@ class StatisticAndroid extends StatelessWidget {
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) return Container();
 
-                      Map<String, dynamic>? data = snapshot.data;
+                      final Map<String, dynamic>? data = snapshot.data;
 
                       if (data == null) return Container();
                       return BoxBattery(dataStream: data);
@@ -79,7 +79,7 @@ class StatisticAndroid extends StatelessWidget {
                   FutureBuilder(
                     future: _infoDevice.getDeviceInfo(),
                     builder: (context, snapshot) {
-                      Map<String, dynamic>? data = snapshot.data;
+                      final Map<String, dynamic>? data = snapshot.data;
 
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(
@@ -116,7 +116,7 @@ class StatisticAndroid extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return Container();
 
-                  Map<String, dynamic>? data = snapshot.data;
+                  final Map<String, dynamic>? data = snapshot.data;
 
                   if (data == null) return Container();
 
@@ -145,7 +145,7 @@ class StatisticAndroid extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return Container();
 
-                  Map<String, dynamic>? data = snapshot.data;
+                  final Map<String, dynamic>? data = snapshot.data;
 
                   if (data == null) return Container();
 
@@ -163,9 +163,16 @@ class StatisticAndroid extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return Container();
 
-                  List<double>? data = snapshot.data;
+                  final List<double>? data = snapshot.data;
 
                   if (data == null) return Container();
+
+                  final map = data.asMap().entries.map(
+                    (element) => BoxProcessFrequence(
+                      index: element.key + 1,
+                      frequence: element.value,
+                    ),
+                  );
 
                   return SizedBox(
                     width: size.width,
@@ -173,16 +180,7 @@ class StatisticAndroid extends StatelessWidget {
                       alignment: WrapAlignment.center,
                       spacing: 12,
                       runSpacing: 10,
-                      children: data
-                          .asMap()
-                          .entries
-                          .map(
-                            (element) => BoxProcessFrequence(
-                              index: element.key + 1,
-                              frequence: element.value,
-                            ),
-                          )
-                          .toList(),
+                      children: map.toList(),
                     ),
                   );
                 },
@@ -193,7 +191,7 @@ class StatisticAndroid extends StatelessWidget {
                 stream: _wifiService.wifiInfoStream,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return Container();
-                  Map<String, dynamic>? data = snapshot.data;
+                  final Map<String, dynamic>? data = snapshot.data;
 
                   if (data == null) return Container();
 
@@ -226,7 +224,7 @@ class StatisticAndroid extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) return Container();
 
-                  Map<String, dynamic>? data = snapshot.data;
+                  final Map<String, dynamic>? data = snapshot.data;
 
                   if (data == null) return Container();
 
@@ -254,7 +252,7 @@ class StatisticAndroid extends StatelessWidget {
                   FutureBuilder(
                     future: _sensorsService.getAllSensors(),
                     builder: (context, snapshot) {
-                      List<Map<String, dynamic>>? dataSensors = snapshot.data;
+                      final List<Map<String, dynamic>>? dataSensors = snapshot.data;
 
                       if (dataSensors == null) return Text('Error');
 

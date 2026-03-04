@@ -1,7 +1,8 @@
+import 'package:archify/core/contracts/monitor_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-class Network {
+class Network implements MonitorManager{
   final Map<String, dynamic> _dataNetwork;
 
   Network({required Map<String, dynamic> dataNetwork})
@@ -27,6 +28,7 @@ class Network {
   int get prefixLength => _dataNetwork['prefixLength'];
   Icon get iconPowerDbm => _setPotencialdBm(dbm);
 
+  @override
   List<Map<String, dynamic>> toList() {
     return _dataNetwork.entries
         .map(

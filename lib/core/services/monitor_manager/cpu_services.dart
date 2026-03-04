@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:archify/core/models/hardware.dart';
+import 'package:archify/constants/info_proc_and_soc.dart';
 import 'package:flutter/services.dart';
 
 /// This service interacts with both the native platform (via [MethodChannel])
@@ -45,7 +45,7 @@ class CPUServices {
       );
 
       if (await file.exists()) {
-        String frequence = await file.readAsString();
+        final String frequence = await file.readAsString();
 
         final int? frequenceInKzh = int.tryParse(frequence.trim());
 

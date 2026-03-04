@@ -148,12 +148,12 @@ class Utils {
     Animation<Offset>? animation,
   ) {
     return list![1].split('/').asMap().entries.map((entry) {
-      final index = entry.key;
-      final value = entry.value;
+      final int index = entry.key;
+      final String value = entry.value;
 
       if (value.isEmpty) return Container();
 
-      bool isLast = index == list[1].split('/').length - 1;
+      final bool isLast = index == list[1].split('/').length - 1;
 
       return Row(
         children: [

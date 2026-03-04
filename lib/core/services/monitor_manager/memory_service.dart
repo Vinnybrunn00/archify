@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:archify/core/models/hardware.dart';
+import 'package:archify/constants/info_proc_and_soc.dart';
 
 /// A service that provides real-time monitoring and information
 /// about the device’s memory (RAM) usage.

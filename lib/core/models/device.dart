@@ -1,6 +1,7 @@
-import 'package:archify/core/models/hardware.dart';
+import 'package:archify/constants/info_proc_and_soc.dart';
+import 'package:archify/core/contracts/monitor_manager.dart';
 
-class Device {
+class Device implements MonitorManager {
   final Map<String, dynamic> _dataDevice;
 
   Device({required Map<String, dynamic> dataDevice}) : _dataDevice = dataDevice;
@@ -25,6 +26,7 @@ class Device {
     return socModels[socModel] ?? socModel;
   }
 
+  @override
   List<Map<String, dynamic>> toList() {
     return _dataDevice.entries
         .map(
@@ -37,8 +39,8 @@ class Device {
   }
 
   String _formatkeys(String key) {
-    String firstLatter = key[0].toUpperCase();
-    String nameFull = '$firstLatter${key.substring(1, key.length)}';
+    final String firstLatter = key[0].toUpperCase();
+    final String nameFull = '$firstLatter${key.substring(1, key.length)}';
     return nameFull.replaceAll('_', ' ');
   }
 }

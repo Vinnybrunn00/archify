@@ -44,9 +44,10 @@ class FilesServices {
   List<FileSystemEntity> listFolders(String path) {
     final Directory dicFiles = Directory(path);
     final List<FileSystemEntity> entities = dicFiles.listSync();
+
     entities.sort((FileSystemEntity a, FileSystemEntity b) {
-      final aDate = a.statSync().modified;
-      final bDate = b.statSync().modified;
+      final DateTime aDate = a.statSync().modified;
+      final DateTime bDate = b.statSync().modified;
       return bDate.compareTo(aDate);
     });
     return entities;

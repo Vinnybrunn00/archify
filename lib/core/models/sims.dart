@@ -1,8 +1,11 @@
-class Sims {
+import 'package:archify/core/contracts/monitor_manager.dart';
+
+class Sims implements MonitorManager{
   final Map<Object?, Object?> _mapSims;
 
   Sims({required Map<Object?, Object?> mapSims}) : _mapSims = mapSims;
 
+  @override
   List<Map<String, dynamic>> toList() {
     return _mapSims.entries
         .map(
