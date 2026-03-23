@@ -22,7 +22,6 @@ class SelectCopyFile implements MessageErrorInterface {
   @override
   String? get errorMessage => _errorMessage;
 
-  /// [showFileSystemException] will never be used in this class
   @override
   String showFileSystemException(String message) {
     switch (message) {
