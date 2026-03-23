@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:archify/core/contracts/message_error_interface.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// This class allows users to select multiple files using the native file picker
@@ -23,7 +24,18 @@ class SelectCopyFile implements MessageErrorInterface {
 
   /// [showFileSystemException] will never be used in this class
   @override
-  String showFileSystemException(String message) => throw UnimplementedError();
+  String showFileSystemException(String message) {
+    switch (message) {
+      case 'already_active':
+        return 'The file picker is already open.';
+      case 'file_picker_error':
+        return 'File picker error, try again.';
+      case 'unknown_path':
+        return 'Could not resolve the file path.';
+      default:
+        return 'Unknown error';
+    }
+  }
 
   // Opens a file picker to select one or more files, then copies them
   // to the specified directory.
@@ -48,7 +60,9 @@ class SelectCopyFile implements MessageErrorInterface {
           await item.copy('$pathTo/$name');
         }
       }
-    } catch (err) {
+    } on PlatformException catch (err) {
+      _errorMessage = showFileSystemException(err.code);
+    } catch (_) {
       _errorMessage = 'Erro ao selecionar ou mover arquivo';
     }
   }
